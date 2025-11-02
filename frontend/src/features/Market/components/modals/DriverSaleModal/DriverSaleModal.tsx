@@ -84,11 +84,6 @@ export const DriverSaleModal = ({
           <DriverSaleModalHeader
             driver={driver!}
             mode={mode}
-            icon={config.icon}
-            iconBgColor={config.iconBgColor}
-            iconBorderColor={config.iconBorderColor}
-            title={config.title}
-            subtitle={config.subtitle}
             onCancel={() => onCancel(null)}
           />
 

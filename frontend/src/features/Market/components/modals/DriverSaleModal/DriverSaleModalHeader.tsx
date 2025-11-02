@@ -1,36 +1,19 @@
 import { useDriverSaleModal } from '@/features/Market/hooks';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
-import type { ReactNode } from 'react';
 
 interface DriverSaleModalHeaderProps {
   driver: DriverWithOwnership;
   mode: 'quickSell' | 'listForSale' | 'buyDriver';
-  icon: ReactNode | string;
-  iconBgColor: string;
-  iconBorderColor: string;
-  title: string;
-  subtitle: string;
   onCancel: () => void;
 }
 
 export const DriverSaleModalHeader = ({
   driver,
   mode,
-  icon,
-  iconBgColor,
-  iconBorderColor,
-  title,
-  subtitle,
   onCancel,
 }: DriverSaleModalHeaderProps) => {
   const {
-    setBuyModalDriver
-  }
-
-  const onCancel = 
-
-  const {
-
+    config
   } = useDriverSaleModal({ driver, mode })
 
   return (
@@ -38,19 +21,19 @@ export const DriverSaleModalHeader = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {mode === 'quickSell' || mode === 'buyDriver' ? (
-            <div className={`w-10 h-10 rounded-full ${iconBgColor} border ${iconBorderColor} flex items-center justify-center`}>
-              {typeof icon === 'string' ? (
-                <span className="text-xl">{icon}</span>
+            <div className={`w-10 h-10 rounded-full ${config.iconBgColor} border ${config.iconBorderColor} flex items-center justify-center`}>
+              {typeof config.icon === 'string' ? (
+                <span className="text-xl">{config.icon}</span>
               ) : (
-                icon
+                config.icon
               )}
             </div>
           ) : (
-            <div className="text-2xl">{icon}</div>
+            <div className="text-2xl">{config.icon}</div>
           )}
           <div>
-            <h2 className="text-xl font-bold text-white">{title}</h2>
-            <p className="text-gray-400 text-xs">{subtitle}</p>
+            <h2 className="text-xl font-bold text-white">{config.title}</h2>
+            <p className="text-gray-400 text-xs">{config.subtitle}</p>
           </div>
         </div>
         <button
