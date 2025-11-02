@@ -86,7 +86,7 @@ interface MarketComputedData {
     filteredDrivers: DriverWithOwnership[];
 }
 
-interface MarketContext extends MarketStates, MarketDataFetch, MarketMutations, DragAndDropVariables, MarketComputedData, UseMarketHandlersReturn {
+export interface MarketContext extends MarketStates, MarketDataFetch, MarketMutations, DragAndDropVariables, MarketComputedData, UseMarketHandlersReturn {
     useMarketHandlers: (params: UseMarketHandlersParams) => UseMarketHandlersReturn;
 }
 

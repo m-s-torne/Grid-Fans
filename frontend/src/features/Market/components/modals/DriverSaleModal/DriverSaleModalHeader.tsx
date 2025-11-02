@@ -1,17 +1,34 @@
+import { useMarketContext } from '@/core/contexts/MarketContext';
 import { useDriverSaleModal } from '@/features/Market/hooks';
-import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+import type { ModalMode } from './modalConfig';
 
 interface DriverSaleModalHeaderProps {
-  driver: DriverWithOwnership;
-  mode: 'quickSell' | 'listForSale' | 'buyDriver';
-  onCancel: () => void;
+  mode: ModalMode;
 }
 
 export const DriverSaleModalHeader = ({
-  driver,
-  mode,
-  onCancel,
+  mode
 }: DriverSaleModalHeaderProps) => {
+  const {
+    buyModalDriver,
+    sellModalDriver,
+    listModalDriver,
+    setBuyModalDriver,
+    setSellModalDriver,
+    setListModalDriver
+  } = useMarketContext()
+
+  const onCancel = mode === 'buyDriver' ? () => setBuyModalDriver(null)
+    : mode === 'quickSell' ? () => setSellModalDriver(null)
+    : () => setListModalDriver(null)
+
+  const driver = mode === 'buyDriver' 
+    ? buyModalDriver
+    : mode === 'quickSell'
+    ? sellModalDriver
+    : mode === 'listForSale'
+    ? listModalDriver : null
+
   const {
     config
   } = useDriverSaleModal({ driver, mode })

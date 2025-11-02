@@ -1,16 +1,20 @@
+import { useMarketContext } from '@/core/contexts/MarketContext';
+import { useDriverSaleModal } from '@/features/Market/hooks';
 import { formatCurrencyPrecise } from '@/features/Market/utils';
 
-interface QuickSellContentProps {
-  acquisitionPrice: number;
-  refundAmount: number;
-  loss: number;
-}
+export const QuickSellContent = () => {
+  const mode = 'quickSell'
 
-export const QuickSellContent = ({
-  acquisitionPrice,
-  refundAmount,
-  loss
-}: QuickSellContentProps) => {
+  const {
+    sellModalDriver: driver
+  } = useMarketContext()
+
+  const {
+    acquisitionPrice,
+    refundAmount,
+    loss
+  } = useDriverSaleModal({ driver, mode })
+
   return (
     <div className="bg-gray-700/30 rounded-lg p-3 border border-gray-600/50">
       <div className="flex justify-between items-center mb-1.5">

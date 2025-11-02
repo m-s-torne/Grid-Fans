@@ -1,3 +1,5 @@
+import { useMarketContext } from '@/core/contexts/MarketContext';
+import { useDriverSaleModal } from '@/features/Market/hooks';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 import { formatCurrencyPrecise } from '@/features/Market/utils';
 
@@ -8,12 +10,19 @@ interface BuyDriverContentProps {
   budgetAfter: number;
 }
 
-export const BuyDriverContent = ({
-  driver,
-  price,
-  userBudget,
-  budgetAfter
-}: BuyDriverContentProps) => {
+export const BuyDriverContent = () => {
+  const mode = 'buyDriver'
+
+  const {
+    userBudget,
+    buyModalDriver: driver
+  } = useMarketContext()
+
+  const {
+    price,
+    budgetAfter
+  } = useDriverSaleModal({ driver, mode })
+
   return (
     <>
       {/* Driver Stats */}

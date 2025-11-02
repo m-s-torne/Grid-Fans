@@ -1,26 +1,25 @@
+import { useMarketContext } from '@/core/contexts/MarketContext';
+import { useDriverSaleModal } from '@/features/Market/hooks';
 import { formatCurrencyPrecise } from '@/features/Market/utils';
 
-interface ListForSaleContentProps {
-  acquisitionPrice: number;
-  inputValue: string;
-  error: string | null;
-  profit: number;
-  profitPercentage: string;
-  loading: boolean;
-  onPriceChange: (value: string) => void;
-  onPresetClick: (multiplier: number) => void;
-}
+export const ListForSaleContent = () => {
+  const mode = 'listForSale'
 
-export const ListForSaleContent = ({
-  acquisitionPrice,
-  inputValue,
-  error,
-  profit,
-  profitPercentage,
-  loading,
-  onPriceChange,
-  onPresetClick
-}: ListForSaleContentProps) => {
+  const {
+    isListing: loading,
+    listModalDriver: driver,
+  } = useMarketContext()
+
+  const {
+    acquisitionPrice,
+    inputValue,
+    error,
+    profit,
+    profitPercentage,
+    handlePriceChange,
+    handlePresetClick
+  } = useDriverSaleModal({ driver, mode })
+
   return (
     <>
       {/* Acquisition Price */}
@@ -43,7 +42,7 @@ export const ListForSaleContent = ({
           <input
             type="text"
             value={inputValue}
-            onChange={(e) => onPriceChange(e.target.value)}
+            onChange={(e) => handlePriceChange(e.target.value)}
             className="w-full pl-7 pr-10 py-1.5 bg-gray-900 border border-gray-600 rounded-lg text-white text-sm font-medium focus:outline-none focus:border-yellow-500 transition-colors"
             placeholder="0.0"
             disabled={loading}
@@ -62,28 +61,28 @@ export const ListForSaleContent = ({
       {/* Price Presets */}
       <div className="grid grid-cols-4 gap-1.5">
         <button
-          onClick={() => onPresetClick(0.9)}
+          onClick={() => handlePresetClick(0.9)}
           disabled={loading}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           -10%
         </button>
         <button
-          onClick={() => onPresetClick(1.05)}
+          onClick={() => handlePresetClick(1.05)}
           disabled={loading}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           +5%
         </button>
         <button
-          onClick={() => onPresetClick(1.1)}
+          onClick={() => handlePresetClick(1.1)}
           disabled={loading}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           +10%
         </button>
         <button
-          onClick={() => onPresetClick(1.2)}
+          onClick={() => handlePresetClick(1.2)}
           disabled={loading}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >

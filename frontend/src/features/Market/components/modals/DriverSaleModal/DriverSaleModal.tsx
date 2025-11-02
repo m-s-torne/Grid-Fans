@@ -1,34 +1,30 @@
 import { motion } from 'framer-motion';
-import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 import { useDriverSaleModal } from '@/features/Market/hooks';
 import { DriverSaleModalHeader } from './DriverSaleModalHeader';
 import { DriverSaleModalInfo } from './DriverSaleModalInfo';
-import { QuickSellContent } from './QuickSellContent';
-import { BuyDriverContent } from './BuyDriverContent';
-import { ListForSaleContent } from './ListForSaleContent';
 import { CantProceedBadge } from './CantProceedBadge';
 import { DriverSaleModalActions } from './DriverSaleModalActions';
 import { useMarketContext } from '@/core/contexts/MarketContext';
-
-type ModalMode = 'quickSell' | 'listForSale' | 'buyDriver';
+import { TransactionDetails } from './TransactionDetails';
+import { MODAL_MODE_CONFIG, type ModalMode } from './modalConfig';
 
 interface DriverSaleModalProps {
-  driver: DriverWithOwnership | null;
   mode: ModalMode;
 }
 
 export const DriverSaleModal = ({
-  driver,
   mode,
 }: DriverSaleModalProps) => {
   const {
-    userBudget,
     setBuyModalDriver,
     setSellModalDriver,
     setListModalDriver,
     isBuyingFromMarket,
     isSellingToMarket,
-    isListing
+    isListing,
+    buyModalDriver,
+    sellModalDriver,
+    listModalDriver
   } = useMarketContext()
 
   const onCancel = mode === 'buyDriver' ? setBuyModalDriver 
@@ -39,21 +35,20 @@ export const DriverSaleModal = ({
     : mode === 'quickSell' ? isSellingToMarket
     : isListing
 
+  const driver = mode === 'buyDriver' 
+    ? buyModalDriver
+    : mode === 'quickSell'
+    ? sellModalDriver
+    : mode === 'listForSale'
+    ? listModalDriver : null
+
+  if (!driver) return
+
   const {
-    acquisitionPrice,
-    refundAmount,
-    loss,
-    price,
-    budgetAfter,
-    profit,
-    profitPercentage,
-    inputValue,
     customPrice,
     error,
     canProceed,
     config,
-    handlePriceChange,
-    handlePresetClick,
     handleConfirm
   } = useDriverSaleModal({
     driver,
@@ -81,43 +76,15 @@ export const DriverSaleModal = ({
       >
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 max-w-md w-full shadow-2xl">
           {/* Header */}
-          <DriverSaleModalHeader
-            driver={driver!}
-            mode={mode}
-            onCancel={() => onCancel(null)}
-          />
+          <DriverSaleModalHeader mode={mode}/>
 
           {/* Content */}
           <div className="px-5 py-3 space-y-2.5">
             {/* Driver Info */}
-            <DriverSaleModalInfo driver={driver} />
+            <DriverSaleModalInfo mode={mode} />
 
             {/* Transaction Details */}
-            {mode === 'quickSell' ? (
-              <QuickSellContent
-                acquisitionPrice={acquisitionPrice}
-                refundAmount={refundAmount}
-                loss={loss}
-              />
-            ) : mode === 'buyDriver' ? (
-              <BuyDriverContent
-                driver={driver}
-                price={price}
-                userBudget={userBudget || 0}
-                budgetAfter={budgetAfter}
-              />
-            ) : (
-              <ListForSaleContent
-                acquisitionPrice={acquisitionPrice}
-                inputValue={inputValue}
-                error={error}
-                profit={profit}
-                profitPercentage={profitPercentage}
-                loading={loading}
-                onPriceChange={handlePriceChange}
-                onPresetClick={handlePresetClick}
-              />
-            )}
+            <TransactionDetails mode={mode}/>
 
             {/* Validation Warning - only for sell/list modes */}
             {!canProceed && mode !== 'buyDriver' && (

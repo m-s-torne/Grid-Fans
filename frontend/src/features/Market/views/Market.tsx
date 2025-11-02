@@ -104,34 +104,32 @@ const Market = () => {
             </AnimatePresence>
 
             {/* Buy Driver Modal */}
-            <AnimatePresence>
-                {buyModalDriver && (
+            {buyModalDriver && (
+                <AnimatePresence>
                     <DriverSaleModal
-                        driver={buyModalDriver}
                         mode="buyDriver"
                     />
-                )}
-            </AnimatePresence>
+                </AnimatePresence>
+            )}
 
             {/* Sell Driver Modal */}
-            <AnimatePresence>
-                {sellModalDriver && (
+            {sellModalDriver && (
+                <AnimatePresence>
                     <DriverSaleModal
-                        driver={sellModalDriver}
                         mode="quickSell"
                     />
-                )}
-            </AnimatePresence>
+                </AnimatePresence>
+            )}
+            
 
             {/* List for Sale Modal */}
-            <AnimatePresence>
-                {listModalDriver && (
+            {listModalDriver && (
+                <AnimatePresence>
                     <DriverSaleModal
-                        driver={listModalDriver}
                         mode="listForSale"
                     />
-                )}
-            </AnimatePresence>
+                </AnimatePresence>
+            )}
 
             {/* Confirm/Success/Error Dialog */}
             <ConfirmDialog
