@@ -1,33 +1,40 @@
-import type { MarketDriverCardProps } from '@/features/Market/types/marketTypes';
 import { motion } from 'framer-motion';
 import { OwnershipBadge } from './OwnershipBadge';
 import { LockCountdown } from './LockCountdown';
 import { PriceDisplay } from './PriceDisplay';
 import { useState } from 'react';
 import { useDriverActionButton } from '@/features/Market/hooks';
-import { calculateDriverPricing } from '@/features/Market/utils';
-import { determineDriverAction } from '@/features/Market/utils';
-import { getDriverLastName } from '@/features/Market/utils/driverNameUtils';
+import { calculateDriverPricing, determineDriverAction, getDriverLastName } from '@/features/Market/utils';
+import { useMarketContext } from '@/core/contexts/MarketContext';
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+
+interface MarketDriverCardProps {
+  driver: DriverWithOwnership;
+  loading?: boolean;
+}
 
 export const MarketDriverCard = ({
   driver,
-  currentUserId,
-  userBudget,
-  userDriverCount,
-  reserveDriverId,
-  onBuyFromMarket,
-  onBuyFromUser,
-  onSell,
-  onList,
-  onUnlist,
-  onBuyout,
-  onViewDetails,
   loading = false,
 }: MarketDriverCardProps) => {
+  const {
+    internalUserId,
+    userBudget,
+    userDriverCount,
+    userTeam,
+    handleBuyFromMarket,
+    handleBuyFromUser,
+    handleSell,
+    handleList,
+    handleUnlist,
+    handleBuyout,
+    setExpandedDriver,
+  } = useMarketContext()
+
   const [showSellMenu, setShowSellMenu] = useState(false);
 
   // Pure function: Calculate pricing and ownership data
-  const pricing = calculateDriverPricing(driver, currentUserId);
+  const pricing = calculateDriverPricing(driver, internalUserId);
   
   // Pure function: Determine action button type and state
   const actions = determineDriverAction(pricing, userBudget, userDriverCount);
@@ -35,7 +42,7 @@ export const MarketDriverCard = ({
   // Extract commonly used values
   const { basePrice, displayPrice, buyoutPrice, isFreeAgent, isOwnedByMe, isOwnedByOther, isLocked, isForSale } = pricing;
   const ownership = driver.ownership;
-  const isReserve = isOwnedByMe && reserveDriverId === driver.id;
+  const isReserve = isOwnedByMe && userTeam!.reserve_driver_id === driver.id;
 
   // Hook: Render action button (JSX)
   const { renderActionButton } = useDriverActionButton({
@@ -45,12 +52,12 @@ export const MarketDriverCard = ({
     driverId: driver.id,
     showSellMenu,
     setShowSellMenu,
-    onBuyFromMarket,
-    onBuyFromUser,
-    onSell,
-    onList,
-    onUnlist,
-    onBuyout,
+    handleBuyFromMarket,
+    handleBuyFromUser,
+    handleSell,
+    handleList,
+    handleUnlist,
+    handleBuyout,
   });
 
   return (
@@ -84,7 +91,7 @@ export const MarketDriverCard = ({
           <div className="mt-1 flex flex-wrap gap-1">
             <OwnershipBadge
               ownership={ownership}
-              currentUserId={currentUserId}
+              currentUserId={internalUserId}
               isReserve={isReserve}
               compact
             />
@@ -94,7 +101,7 @@ export const MarketDriverCard = ({
         <div
           onClick={(e) => {
             e.stopPropagation();
-            onViewDetails?.(driver);
+            setExpandedDriver?.(driver);
           }}
           className="p-1.5 sm:p-2 rounded-lg bg-gray-700/60 hover:bg-gray-500/80 border border-gray-600/40 hover:border-gray-400/60 transition-all duration-150 cursor-pointer group shadow-lg hover:shadow-xl flex-shrink-0"
         >

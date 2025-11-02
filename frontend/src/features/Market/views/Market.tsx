@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     DriverCardExpanded, 
@@ -8,106 +8,35 @@ import {
     MarketDriverSection
 } from '@/features/Market/components';
 import { ConfirmDialog } from '@/core/components';
-import { useLeagueDetail } from '@/features/League/hooks';
-import { 
-    useFreeDrivers, 
-    useDriversForSale, 
-    useUserDrivers, 
-    useBuyFromMarket, 
-    useSellToMarket, 
-    useListForSale, 
-    useUnlistFromSale, 
-    useBuyFromUser,
-    useReserveDriverDragDrop,
-    useSortedMyDrivers,
-    useFilteredDrivers,
-    useMarketHandlers,
-} from '@/features/Market/hooks';
-import { useUserTeam } from '@/core/hooks/userTeams';
-import { useMarketStates } from '@/features/Market/hooks';
+import { useMarketContext } from '@/core/contexts/MarketContext';
 
 const Market = () => {
-    const { leagueId } = useParams<{ leagueId: string }>();
     const navigate = useNavigate();
     const {
-        expandedDriver, setExpandedDriver,
-        searchQuery, setSearchQuery,
-        activeTab, setActiveTab,
-        buyModalDriver, setBuyModalDriver,
-        sellModalDriver, setSellModalDriver,
-        listModalDriver, setListModalDriver,
-        dialog, setDialog
-    } = useMarketStates()
-
-    // Fetch data
-    const { league, isLoading: leagueLoading, error: leagueError } = useLeagueDetail(leagueId || '');
-    const { data: freeDrivers, isLoading: freeDriversLoading } = useFreeDrivers(Number(leagueId));
-    const { data: forSaleDrivers, isLoading: forSaleLoading } = useDriversForSale(Number(leagueId));
-    const { data: userTeam, isLoading: teamLoading } = useUserTeam(Number(leagueId));
-    
-    // Get user's internal ID from team
-    const internalUserId = userTeam?.user_id || 0;
-    const { data: myDrivers, isLoading: myDriversLoading } = useUserDrivers(
-        Number(leagueId),
-        internalUserId
-    );
-
-    // Calculate user driver count from actual owned drivers
-    const userDriverCount = myDrivers?.length || 0;
-    const userBudget = userTeam?.budget_remaining || 0;
-
-    // Sort drivers for "My Drivers" tab by their slot position
-    const sortedMyDrivers = useSortedMyDrivers({
-        myDrivers,
-        userTeam,
-    });
-
-    // Mutations
-    const { mutate: buyFromMarket, isPending: isBuyingFromMarket } = useBuyFromMarket();
-    const { mutate: buyFromUser } = useBuyFromUser();
-    const { mutate: sellToMarket, isPending: isSellingToMarket } = useSellToMarket();
-    const { mutate: listForSale, isPending: isListing } = useListForSale();
-    const { mutate: unlistFromSale } = useUnlistFromSale();
-
-    // Drag & Drop for reserve driver swap
-    const { sensors, swappingDriverIds, handleDragEnd } = useReserveDriverDragDrop({
-        leagueId: Number(leagueId),
-        userId: internalUserId,
-        reserveDriverId: userTeam?.reserve_driver_id,
-    });
-
-    // Market operation handlers
-    const handlers = useMarketHandlers({
-        leagueId: Number(leagueId),
-        internalUserId,
-        freeDrivers,
-        forSaleDrivers,
-        myDrivers,
-        userBudget,
-        userDriverCount,
-        buyFromMarket,
-        buyFromUser,
-        sellToMarket,
-        listForSale,
-        unlistFromSale,
+        leagueLoading,
+        freeDriversLoading,
+        forSaleLoading,
+        myDriversLoading,
+        teamLoading,
+        leagueError,
+        league,
+        setExpandedDriver,
+        expandedDriver,
+        buyModalDriver,
         setBuyModalDriver,
+        confirmSell,
+        confirmBuyFromMarket,
         setSellModalDriver,
+        confirmList,
         setListModalDriver,
         setDialog,
         dialog,
-        buyModalDriver,
+        isBuyingFromMarket,
         sellModalDriver,
+        isSellingToMarket,
         listModalDriver,
-    });
-
-    // Filter drivers by search query
-    const filteredDrivers = useFilteredDrivers({
-        freeDrivers,
-        forSaleDrivers,
-        sortedMyDrivers,
-        activeTab,
-        searchQuery,
-    });
+        isListing,
+    } = useMarketContext()
 
     // Loading state
     if (leagueLoading || freeDriversLoading || forSaleLoading || myDriversLoading || teamLoading) {
@@ -155,49 +84,16 @@ const Market = () => {
                 <MarketHeader/>
 
                 {/* Tabs & Search */}
-                <MarketTabs
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    freeDriversCount={freeDrivers?.length || 0}
-                    forSaleDriversCount={forSaleDrivers?.length || 0}
-                    myDriversCount={myDrivers?.length || 0}
-                />
+                <MarketTabs/>
 
                 {/* Driver List Section */}
-                <MarketDriverSection
-                    activeTab={activeTab}
-                    filteredDrivers={filteredDrivers}
-                    searchQuery={searchQuery}
-                    loading={
-                        activeTab === 'free' ? freeDriversLoading : 
-                        activeTab === 'for-sale' ? forSaleLoading : 
-                        myDriversLoading
-                    }
-                    currentUserId={internalUserId}
-                    userBudget={userBudget}
-                    userDriverCount={userDriverCount}
-                    reserveDriverId={userTeam?.reserve_driver_id}
-                    swappingDriverIds={swappingDriverIds}
-                    sensors={sensors}
-                    onDragEnd={handleDragEnd}
-                    handlers={handlers}
-                    onViewDetails={setExpandedDriver}
-                />
+                <MarketDriverSection />
             </div>
 
             {/* Expanded Driver Modal */}
             <AnimatePresence>
                 {expandedDriver && (
                     <div>
-                        <motion.div
-                            className="fixed inset-0 backdrop-blur-md bg-black/50 z-[60]"
-                            onClick={() => setExpandedDriver(null)}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        />
                         <DriverCardExpanded
                             key={expandedDriver.id}
                             d={expandedDriver as any}
@@ -212,11 +108,7 @@ const Market = () => {
                 {buyModalDriver && (
                     <DriverSaleModal
                         driver={buyModalDriver}
-                        userBudget={userBudget}
                         mode="buyDriver"
-                        onConfirm={handlers.confirmBuyFromMarket}
-                        onCancel={() => setBuyModalDriver(null)}
-                        loading={isBuyingFromMarket}
                     />
                 )}
             </AnimatePresence>
@@ -226,11 +118,7 @@ const Market = () => {
                 {sellModalDriver && (
                     <DriverSaleModal
                         driver={sellModalDriver}
-                        userDriverCount={userDriverCount}
                         mode="quickSell"
-                        onConfirm={handlers.confirmSell}
-                        onCancel={() => setSellModalDriver(null)}
-                        loading={isSellingToMarket}
                     />
                 )}
             </AnimatePresence>
@@ -240,11 +128,7 @@ const Market = () => {
                 {listModalDriver && (
                     <DriverSaleModal
                         driver={listModalDriver}
-                        userDriverCount={userDriverCount}
                         mode="listForSale"
-                        onConfirm={(price) => handlers.confirmList(price!)}
-                        onCancel={() => setListModalDriver(null)}
-                        loading={isListing}
                     />
                 )}
             </AnimatePresence>

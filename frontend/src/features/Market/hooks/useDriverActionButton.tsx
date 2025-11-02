@@ -13,12 +13,12 @@ interface UseDriverActionButtonParams {
   driverId: number;
   showSellMenu: boolean;
   setShowSellMenu: (show: boolean) => void;
-  onBuyFromMarket?: (driverId: number) => void;
-  onBuyFromUser?: (driverId: number) => void;
-  onSell?: (driverId: number) => void;
-  onList?: (driverId: number) => void;
-  onUnlist?: (driverId: number) => void;
-  onBuyout?: (driverId: number) => void;
+  handleBuyFromMarket?: (driverId: number) => void;
+  handleBuyFromUser?: (driverId: number) => void;
+  handleSell?: (driverId: number) => void;
+  handleList?: (driverId: number) => void;
+  handleUnlist?: (driverId: number) => void;
+  handleBuyout?: (driverId: number) => void;
 }
 
 export const useDriverActionButton = ({
@@ -28,12 +28,12 @@ export const useDriverActionButton = ({
   driverId,
   showSellMenu,
   setShowSellMenu,
-  onBuyFromMarket,
-  onBuyFromUser,
-  onSell,
-  onList,
-  onUnlist,
-  onBuyout,
+  handleBuyFromMarket,
+  handleBuyFromUser,
+  handleSell,
+  handleList,
+  handleUnlist,
+  handleBuyout,
 }: UseDriverActionButtonParams) => {
   const { refundPrice } = pricing;
   const { actionType, canExecuteAction, canAfford, canAffordBuyout, hasSpace } = actions;
@@ -45,7 +45,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (canExecuteAction) onBuyFromMarket?.(driverId);
+              if (canExecuteAction) handleBuyFromMarket?.(driverId);
             }}
             disabled={!canExecuteAction || loading}
             className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all ${
@@ -70,7 +70,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onUnlist?.(driverId);
+              handleUnlist?.(driverId);
             }}
             disabled={loading}
             className="w-full px-3 py-2 rounded-lg font-medium text-sm bg-gray-600 hover:bg-gray-700 text-white transition-all"
@@ -102,7 +102,7 @@ export const useDriverActionButton = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowSellMenu(false);
-                    onSell?.(driverId);
+                    handleSell?.(driverId);
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-white hover:bg-red-600/50 transition-colors flex items-center gap-2"
                 >
@@ -116,7 +116,7 @@ export const useDriverActionButton = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowSellMenu(false);
-                    onList?.(driverId);
+                    handleList?.(driverId);
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-white hover:bg-yellow-600/50 transition-colors flex items-center gap-2 border-t border-gray-700"
                 >
@@ -136,7 +136,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (canExecuteAction) onBuyFromUser?.(driverId);
+              if (canExecuteAction) handleBuyFromUser?.(driverId);
             }}
             disabled={!canExecuteAction || loading}
             className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all ${
@@ -154,7 +154,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (canExecuteAction) onBuyout?.(driverId);
+              if (canExecuteAction) handleBuyout?.(driverId);
             }}
             disabled={!canExecuteAction || loading}
             className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-1 ${

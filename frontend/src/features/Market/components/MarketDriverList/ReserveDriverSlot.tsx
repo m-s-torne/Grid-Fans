@@ -17,17 +17,6 @@ interface ReserveDriverSlotProps extends MarketComponentBaseProps {
 export const ReserveDriverSlot = ({
   driver,
   isEmpty = false,
-  currentUserId,
-  userBudget,
-  userDriverCount,
-  reserveDriverId,
-  onBuyFromMarket,
-  onBuyFromUser,
-  onSell,
-  onList,
-  onUnlist,
-  onBuyout,
-  onViewDetails,
   dragRef,
   dragStyle,
   dragAttributes,
@@ -35,6 +24,7 @@ export const ReserveDriverSlot = ({
   isDragging = false,
   isSwapping = false,
 }: ReserveDriverSlotProps) => {
+
   return (
     <div className="mt-4 sm:mt-6">
       {/* Section Header */}
@@ -117,20 +107,7 @@ export const ReserveDriverSlot = ({
                     {...dragListeners}
                     className="rounded-xl overflow-hidden touch-none cursor-grab active:cursor-grabbing"
                   >
-                    <MarketDriverCard
-                      driver={driver}
-                      currentUserId={currentUserId}
-                      userBudget={userBudget}
-                      userDriverCount={userDriverCount}
-                      reserveDriverId={reserveDriverId}
-                      onBuyFromMarket={onBuyFromMarket}
-                      onBuyFromUser={onBuyFromUser}
-                      onSell={onSell}
-                      onList={onList}
-                      onUnlist={onUnlist}
-                      onBuyout={onBuyout}
-                      onViewDetails={onViewDetails}
-                    />
+                    <MarketDriverCard driver={driver}/>
                   </div>
                 </div>
             

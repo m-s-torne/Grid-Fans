@@ -218,20 +218,8 @@ export interface MarketComponentBaseProps {
  * Props for MarketDriverCard component
  * Extends base props with driver-specific fields
  */
-export interface MarketDriverCardProps extends MarketComponentBaseProps {
-  driver: DriverWithOwnership;
-  loading?: boolean;
-}
 
 /**
  * Props for MarketDriverList component
  * Extends base props with list-specific fields
  */
-export interface MarketDriverListProps extends MarketComponentBaseProps {
-  drivers: DriverWithOwnership[];
-  loading: boolean;
-  emptyMessage?: string;
-  gridColumns?: 2 | 3 | 4;
-  enableDragDrop?: boolean;
-  swappingDriverIds?: { mainDriver: number; reserve: number } | null;
-}

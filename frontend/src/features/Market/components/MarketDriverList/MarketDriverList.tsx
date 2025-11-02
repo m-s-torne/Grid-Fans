@@ -1,29 +1,43 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import type { MarketDriverListProps } from '@/features/Market/types/marketTypes';
 import { MarketDriverCard } from './MarketDriverCard';
-import { ReserveDriverSlot } from './ReserveDriverSlot';
+import { DraggableCard } from './DraggableCard';
+import { DraggableReserveSlot } from './DraggableReserveSlot';
+import { useMarketContext } from '@/core/contexts/MarketContext'
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+
+interface MarketDriverListProps {
+  drivers: DriverWithOwnership[];
+  gridColumns?: 2 | 3 | 4;
+  enableDragDrop?: boolean;
+}
 
 export const MarketDriverList = ({
   drivers,
-  loading,
-  currentUserId,
-  userBudget,
-  userDriverCount,
-  reserveDriverId,
-  onBuyFromMarket,
-  onBuyFromUser,
-  onSell,
-  onList,
-  onUnlist,
-  onBuyout,
-  onViewDetails,
-  emptyMessage = 'No drivers found',
-  gridColumns = 4,
+  gridColumns = 4 as const,
   enableDragDrop = false,
-  swappingDriverIds,
 }: MarketDriverListProps) => {
+  const {
+    activeTab,
+    freeDriversLoading,
+    forSaleLoading,
+    myDriversLoading,
+    userTeam,
+    searchQuery,
+  } = useMarketContext()
+
+  const reserveDriverId = userTeam!.reserve_driver_id
+
+  const loading = activeTab === 'free' ? freeDriversLoading : 
+                        activeTab === 'for-sale' ? forSaleLoading : 
+                        myDriversLoading
+
+  const getEmptyMessage = () => {
+      if (searchQuery) return "No drivers match your search";
+      
+      if (activeTab === 'my-drivers') return "You don't own any drivers yet";
+      if (activeTab === 'free') return "No free agents available";
+      return "No drivers for sale available";
+  };
   // Loading skeletons
   if (loading) {
     return (
@@ -74,7 +88,7 @@ export const MarketDriverList = ({
           />
         </svg>
         <h3 className="text-gray-400 text-lg sm:text-xl font-semibold mb-2">No Drivers Found</h3>
-        <p className="text-gray-500 text-sm sm:text-base">{emptyMessage}</p>
+        <p className="text-gray-500 text-sm sm:text-base">{getEmptyMessage()}</p>
       </div>
     );
   }
@@ -84,133 +98,6 @@ export const MarketDriverList = ({
   if (enableDragDrop) {
     const mainDrivers = drivers.filter(d => d.id !== reserveDriverId);
     const reserveDriver = drivers.find(d => d.id === reserveDriverId);
-
-    // Skeleton component for swapping state
-    const DriverSkeleton = () => (
-      <div className="p-3 sm:p-4 rounded-lg border border-blue-500 bg-gray-800/50 animate-pulse">
-        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-500/30 flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="h-3 sm:h-4 bg-blue-500/30 rounded w-3/4 mb-2" />
-            <div className="h-2 sm:h-3 bg-blue-500/30 rounded w-1/2" />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-2 sm:mb-3">
-          <div className="h-10 sm:h-12 bg-blue-500/20 rounded" />
-          <div className="h-10 sm:h-12 bg-blue-500/20 rounded" />
-          <div className="h-10 sm:h-12 bg-blue-500/20 rounded" />
-        </div>
-        <div className="h-8 sm:h-10 bg-blue-500/20 rounded" />
-        <div className="text-center mt-2 text-[10px] sm:text-xs text-blue-400">
-          Swapping drivers...
-        </div>
-      </div>
-    );
-
-    const DraggableCard = ({ driver }: { driver: typeof drivers[0] }) => {
-      const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-      } = useSortable({ 
-        id: `driver-${driver.id}`,
-        transition: null, // Disable automatic transitions
-      });
-
-      // Check if this driver is being swapped
-      const isSwapping = swappingDriverIds && 
-        (swappingDriverIds.mainDriver === driver.id || swappingDriverIds.reserve === driver.id);
-
-      // Only apply transform to the card being dragged, not to other cards
-      const style = {
-        transform: isDragging ? CSS.Transform.toString(transform) : undefined,
-        transition: isDragging ? transition : undefined,
-        opacity: isDragging ? 0.5 : 1,
-      };
-
-      // Show skeleton if swapping
-      if (isSwapping) {
-        return <DriverSkeleton />;
-      }
-
-      return (
-        <div>
-          <div
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            className="touch-none cursor-grab active:cursor-grabbing"
-          >
-            <MarketDriverCard
-              driver={driver}
-              currentUserId={currentUserId}
-              userBudget={userBudget}
-              userDriverCount={userDriverCount}
-              reserveDriverId={reserveDriverId}
-              onBuyFromMarket={onBuyFromMarket}
-              onBuyFromUser={onBuyFromUser}
-              onSell={onSell}
-              onList={onList}
-              onUnlist={onUnlist}
-              onBuyout={onBuyout}
-              onViewDetails={onViewDetails}
-            />
-          </div>
-        </div>
-      );
-    };
-
-    const DraggableReserveSlot = () => {
-      const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-      } = useSortable({ 
-        id: reserveDriver ? `driver-${reserveDriver.id}` : 'reserve-empty',
-        transition: null, // Disable automatic transitions
-      });
-
-      // Only apply transform to the card being dragged
-      const dragStyle = {
-        transform: isDragging ? CSS.Transform.toString(transform) : undefined,
-        transition: isDragging ? transition : undefined,
-      };
-
-      // Check if reserve driver is being swapped
-      const isSwapping = swappingDriverIds && reserveDriver &&
-        (swappingDriverIds.mainDriver === reserveDriver.id || swappingDriverIds.reserve === reserveDriver.id);
-
-      return (
-        <ReserveDriverSlot
-          driver={reserveDriver || null}
-          isEmpty={!reserveDriver}
-          currentUserId={currentUserId}
-          userBudget={userBudget}
-          userDriverCount={userDriverCount}
-          reserveDriverId={reserveDriverId}
-          onBuyFromMarket={onBuyFromMarket}
-          onBuyFromUser={onBuyFromUser}
-          onSell={onSell}
-          onList={onList}
-          onUnlist={onUnlist}
-          onBuyout={onBuyout}
-          onViewDetails={onViewDetails}
-          dragRef={reserveDriver ? setNodeRef : undefined}
-          dragStyle={reserveDriver ? dragStyle : undefined}
-          dragAttributes={reserveDriver ? attributes : undefined}
-          dragListeners={reserveDriver ? listeners : undefined}
-          isDragging={isDragging}
-          isSwapping={isSwapping ?? undefined}
-        />
-      );
-    };
 
     return (
       <div>
@@ -241,7 +128,7 @@ export const MarketDriverList = ({
         </div>
 
         {/* Reserve Driver Section */}
-        <DraggableReserveSlot />
+        <DraggableReserveSlot driver={reserveDriver!} />
       </div>
     );
   }
@@ -262,20 +149,7 @@ export const MarketDriverList = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
           >
-            <MarketDriverCard
-              driver={driver}
-              currentUserId={currentUserId}
-              userBudget={userBudget}
-              userDriverCount={userDriverCount}
-              reserveDriverId={reserveDriverId}
-              onBuyFromMarket={onBuyFromMarket}
-              onBuyFromUser={onBuyFromUser}
-              onSell={onSell}
-              onList={onList}
-              onUnlist={onUnlist}
-              onBuyout={onBuyout}
-              onViewDetails={onViewDetails}
-            />
+            <MarketDriverCard driver={driver}/>
           </motion.div>
         ))}
       </AnimatePresence>

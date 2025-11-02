@@ -8,3 +8,4 @@ export {
 } from './currencyFormat'
 export { calculateModalValues, calculateProfit } from './modalCalculations'
 export { calculateDriverSaleValues, calculateProfit as calculateSaleProfit } from './driverSaleCalculations'
+export { getDriverLastName } from './driverNameUtils'

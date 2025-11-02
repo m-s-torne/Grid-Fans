@@ -6,24 +6,29 @@ import {
   calculateDriverSaleValues, 
   calculateSaleProfit 
 } from '@/features/Market/utils';
+import { useMarketContext } from '@/core/contexts/MarketContext';
 
 type ModalMode = 'quickSell' | 'listForSale' | 'buyDriver';
 
 interface UseDriverSaleModalProps {
-  driver: DriverWithOwnership;
+  driver: DriverWithOwnership | null;
   userDriverCount?: number;
   userBudget?: number;
   mode: ModalMode;
-  onConfirm: (price?: number) => void;
 }
 
 export const useDriverSaleModal = ({
   driver,
-  userDriverCount,
-  userBudget,
   mode,
-  onConfirm
 }: UseDriverSaleModalProps) => {
+  const {
+    userDriverCount,
+    userBudget,
+    confirmBuyFromMarket,
+    confirmSell,
+    confirmList,
+  } = useMarketContext()
+
   // Calculate all financial values
   const {
     acquisitionPrice,
@@ -32,7 +37,7 @@ export const useDriverSaleModal = ({
     price,
     budgetAfter,
     suggestedPrice
-  } = calculateDriverSaleValues(driver, userBudget || 0);
+  } = calculateDriverSaleValues(driver!, userBudget || 0);
   
   // List for Sale state
   const [inputValue, setInputValue] = useState(formatCurrencyNumber(suggestedPrice));
@@ -59,7 +64,7 @@ export const useDriverSaleModal = ({
   
   const handlePresetClick = (multiplier: number) => {
     const newPrice = acquisitionPrice * multiplier;
-    setInputValue(formatCurrencyNumber(newPrice));
+    setInputValue(formatCurrencyNumber(newPrice, 2));
     setCustomPrice(Math.round(newPrice));
     setError(null);
   };
@@ -70,9 +75,11 @@ export const useDriverSaleModal = ({
         setError('Please enter a valid price');
         return;
       }
-      onConfirm(customPrice);
+      confirmList(customPrice);
+    } else if (mode === 'quickSell') {
+      confirmSell()
     } else {
-      onConfirm();
+      confirmBuyFromMarket();
     }
   };
   
@@ -98,7 +105,7 @@ export const useDriverSaleModal = ({
         iconBgColor: 'bg-yellow-600/20',
         iconBorderColor: 'border-yellow-500/50',
         title: 'List for Sale',
-        subtitle: `Set your asking price for ${driver.full_name}`,
+        subtitle: `Set your asking price for ${driver!.full_name}`,
         buttonText: 'List for Sale',
         buttonColor: 'bg-yellow-600 hover:bg-yellow-700',
         infoText: 'Listed drivers appear in "For Sale" tab. You can unlist anytime.'

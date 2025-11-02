@@ -8,28 +8,37 @@ import { BuyDriverContent } from './BuyDriverContent';
 import { ListForSaleContent } from './ListForSaleContent';
 import { CantProceedBadge } from './CantProceedBadge';
 import { DriverSaleModalActions } from './DriverSaleModalActions';
+import { useMarketContext } from '@/core/contexts/MarketContext';
 
 type ModalMode = 'quickSell' | 'listForSale' | 'buyDriver';
 
 interface DriverSaleModalProps {
-  driver: DriverWithOwnership;
-  userDriverCount?: number;
-  userBudget?: number;
+  driver: DriverWithOwnership | null;
   mode: ModalMode;
-  onConfirm: (price?: number) => void;
-  onCancel: () => void;
-  loading?: boolean;
 }
 
 export const DriverSaleModal = ({
   driver,
-  userDriverCount,
-  userBudget,
   mode,
-  onConfirm,
-  onCancel,
-  loading = false,
 }: DriverSaleModalProps) => {
+  const {
+    userBudget,
+    setBuyModalDriver,
+    setSellModalDriver,
+    setListModalDriver,
+    isBuyingFromMarket,
+    isSellingToMarket,
+    isListing
+  } = useMarketContext()
+
+  const onCancel = mode === 'buyDriver' ? setBuyModalDriver 
+    : mode === 'quickSell' ? setSellModalDriver
+    : setListModalDriver
+
+  const loading = mode === 'buyDriver' ? isBuyingFromMarket
+    : mode === 'quickSell' ? isSellingToMarket
+    : isListing
+
   const {
     acquisitionPrice,
     refundAmount,
@@ -48,10 +57,7 @@ export const DriverSaleModal = ({
     handleConfirm
   } = useDriverSaleModal({
     driver,
-    userDriverCount,
-    userBudget,
     mode,
-    onConfirm
   });
 
   return (
@@ -59,7 +65,7 @@ export const DriverSaleModal = ({
       {/* Backdrop */}
       <motion.div
         className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
-        onClick={onCancel}
+        onClick={() => onCancel(null)}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -82,7 +88,7 @@ export const DriverSaleModal = ({
             iconBorderColor={config.iconBorderColor}
             title={config.title}
             subtitle={config.subtitle}
-            onCancel={onCancel}
+            onCancel={() => onCancel(null)}
           />
 
           {/* Content */}
@@ -144,7 +150,7 @@ export const DriverSaleModal = ({
             customPrice={customPrice}
             buttonColor={config.buttonColor}
             buttonText={config.buttonText}
-            onCancel={onCancel}
+            onCancel={() => onCancel(null)}
             onConfirm={handleConfirm}
           />
         </div>

@@ -8,13 +8,20 @@ import { motion } from 'framer-motion'
 
 interface DriverCardProps {
     d:DriverWithOwnership;
-    setExpanded: (name: string) => void;
+    setExpanded: (name: string | null) => void;
 }
 
 export const DriverCardExpanded = ({ d, setExpanded }: DriverCardProps) =>  {
     
     return (
         <>
+            <motion.div
+                className="fixed inset-0 backdrop-blur-md bg-black/50 z-[60]"
+                onClick={() => setExpanded(null)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+            />
             {/* Driver number - fixed background outside scrollable container */}
             <motion.div 
                 className="fixed sm:top-[5%] top-[20%] sm:left-0 right-0 z-[71] pointer-events-none flex justify-center"

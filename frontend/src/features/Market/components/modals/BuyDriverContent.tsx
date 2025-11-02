@@ -2,7 +2,7 @@ import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 import { formatCurrencyPrecise } from '@/features/Market/utils';
 
 interface BuyDriverContentProps {
-  driver: DriverWithOwnership;
+  driver: DriverWithOwnership | null;
   price: number;
   userBudget: number;
   budgetAfter: number;
@@ -17,22 +17,22 @@ export const BuyDriverContent = ({
   return (
     <>
       {/* Driver Stats */}
-      {(driver.season_results || driver.fantasy_stats) && (
+      {(driver!.season_results || driver!.fantasy_stats) && (
         <div className="grid grid-cols-3 gap-2">
-          {driver.season_results && (
+          {driver!.season_results && (
             <div className="bg-gray-700/30 rounded-lg p-2 border border-gray-600/50">
               <p className="text-[10px] text-gray-400">Points</p>
               <p className="text-sm font-bold text-white">
-                {driver.season_results.points}
+                {driver!.season_results.points}
               </p>
             </div>
           )}
-          {driver.fantasy_stats && (
+          {driver!.fantasy_stats && (
             <>
               <div className="bg-gray-700/30 rounded-lg p-2 border border-gray-600/50">
                 <p className="text-[10px] text-gray-400">Avg Finish</p>
                 <p className="text-sm font-bold text-white">
-                  P{driver.fantasy_stats.avg_finish?.toLocaleString(undefined, { maximumFractionDigits: 1, useGrouping: false }) || 'N/A'}
+                  P{driver!.fantasy_stats.avg_finish?.toLocaleString(undefined, { maximumFractionDigits: 1, useGrouping: false }) || 'N/A'}
                 </p>
               </div>
               <div className="bg-gray-700/30 rounded-lg p-2 border border-gray-600/50">
