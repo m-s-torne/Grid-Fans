@@ -82,6 +82,7 @@ export const DriverSaleModal = ({
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 max-w-md w-full shadow-2xl">
           {/* Header */}
           <DriverSaleModalHeader
+            driver={driver!}
             mode={mode}
             icon={config.icon}
             iconBgColor={config.iconBgColor}

@@ -1,6 +1,9 @@
+import { useDriverSaleModal } from '@/features/Market/hooks';
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 import type { ReactNode } from 'react';
 
 interface DriverSaleModalHeaderProps {
+  driver: DriverWithOwnership;
   mode: 'quickSell' | 'listForSale' | 'buyDriver';
   icon: ReactNode | string;
   iconBgColor: string;
@@ -11,6 +14,7 @@ interface DriverSaleModalHeaderProps {
 }
 
 export const DriverSaleModalHeader = ({
+  driver,
   mode,
   icon,
   iconBgColor,
@@ -19,6 +23,16 @@ export const DriverSaleModalHeader = ({
   subtitle,
   onCancel,
 }: DriverSaleModalHeaderProps) => {
+  const {
+    setBuyModalDriver
+  }
+
+  const onCancel = 
+
+  const {
+
+  } = useDriverSaleModal({ driver, mode })
+
   return (
     <div className="px-5 py-4 border-b border-gray-700">
       <div className="flex items-center justify-between">
