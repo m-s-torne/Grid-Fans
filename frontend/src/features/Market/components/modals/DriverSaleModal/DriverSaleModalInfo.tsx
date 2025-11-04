@@ -1,23 +1,10 @@
-import { useMarketContext } from '@/core/contexts/MarketContext';
-import type { ModalMode } from './modalConfig';
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 
 interface DriverSaleModalInfoProps {
-  mode: ModalMode;
+  driver: DriverWithOwnership;
 }
 
-export const DriverSaleModalInfo = ({ mode }: DriverSaleModalInfoProps) => {
-  const {
-    buyModalDriver,
-    sellModalDriver,
-    listModalDriver,
-  } = useMarketContext()
-
-  const driver = mode === 'buyDriver' 
-    ? buyModalDriver
-    : mode === 'quickSell'
-    ? sellModalDriver
-    : mode === 'listForSale'
-    ? listModalDriver : null
+export const DriverSaleModalInfo = ({ driver }: DriverSaleModalInfoProps) => {
 
   return (
     <div className="bg-black/30 rounded-xl p-3 border border-gray-700/50">

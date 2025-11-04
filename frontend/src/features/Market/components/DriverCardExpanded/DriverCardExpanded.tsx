@@ -14,7 +14,7 @@ interface DriverCardProps {
 export const DriverCardExpanded = ({ d, setExpanded }: DriverCardProps) =>  {
     
     return (
-        <>
+        <div>
             <motion.div
                 className="fixed inset-0 backdrop-blur-md bg-black/50 z-[60]"
                 onClick={() => setExpanded(null)}
@@ -168,6 +168,6 @@ export const DriverCardExpanded = ({ d, setExpanded }: DriverCardProps) =>  {
                 </div>
             </div>
         </GlassCard>
-        </>
+        </div>
     )
 }

@@ -57,6 +57,7 @@ export interface DriverOwnership {
   updated_at: string;
 }
 
+type Transaction = 'buy_from_market' | 'buy_from_user' | 'sell_to_market' | 'buyout_clause' | 'emergency_assignment';
 export interface MarketTransaction {
   id: number;
   driver_id: number;
@@ -64,7 +65,7 @@ export interface MarketTransaction {
   seller_id: number | null; // null for free agent purchases
   buyer_id: number;
   transaction_price: number;
-  transaction_type: 'buy_from_market' | 'buy_from_user' | 'sell_to_market' | 'buyout_clause' | 'emergency_assignment';
+  transaction_type: Transaction;
   transaction_date: string;
 }
 
@@ -140,6 +141,7 @@ export interface ListDriverResponse {
   is_listed: boolean;
 }
 
+type Replacement = 'reserve_promoted' | 'emergency_tier_c' | 'reserve_removed';
 export interface BuyoutClauseResponse {
   success: boolean;
   driver_id: number;
@@ -149,7 +151,7 @@ export interface BuyoutClauseResponse {
   locked_until: string;
   replacement_info: {
     auto_replaced: boolean;
-    replacement_type: 'reserve_promoted' | 'emergency_tier_c' | 'reserve_removed';
+    replacement_type: Replacement;
     emergency_driver_id?: number;
     message: string;
   } | null;

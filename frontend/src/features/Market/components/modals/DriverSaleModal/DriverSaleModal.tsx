@@ -15,41 +15,32 @@ interface DriverSaleModalProps {
 export const DriverSaleModal = ({
   mode,
 }: DriverSaleModalProps) => {
-  const {
-    setBuyModalDriver,
-    setSellModalDriver,
-    setListModalDriver,
-    isBuyingFromMarket,
-    isSellingToMarket,
-    isListing,
-    buyModalDriver,
-    sellModalDriver,
-    listModalDriver
-  } = useMarketContext()
+  const marketContext = useMarketContext();
+  // Para añadir un nuevo modo, solo editas modalConfig.ts
+  const config = MODAL_MODE_CONFIG[mode];
+  const driver = config.getDriver(marketContext);
+  const onCancel = config.setDriver(marketContext);
+  const loading = config.getLoading(marketContext);
 
-  const onCancel = mode === 'buyDriver' ? setBuyModalDriver 
-    : mode === 'quickSell' ? setSellModalDriver
-    : setListModalDriver
-
-  const loading = mode === 'buyDriver' ? isBuyingFromMarket
-    : mode === 'quickSell' ? isSellingToMarket
-    : isListing
-
-  const driver = mode === 'buyDriver' 
-    ? buyModalDriver
-    : mode === 'quickSell'
-    ? sellModalDriver
-    : mode === 'listForSale'
-    ? listModalDriver : null
-
-  if (!driver) return
+  // Early return si no hay driver
+  if (!driver) return null;
 
   const {
     customPrice,
     error,
     canProceed,
-    config,
-    handleConfirm
+    config: modalConfig,
+    handleConfirm,
+    acquisitionPrice,
+    inputValue,
+    profit,
+    profitPercentage,
+    handlePriceChange,
+    handlePresetClick,
+    price,
+    budgetAfter,
+    refundAmount,
+    loss,
   } = useDriverSaleModal({
     driver,
     mode,
@@ -76,15 +67,40 @@ export const DriverSaleModal = ({
       >
         <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 max-w-md w-full shadow-2xl">
           {/* Header */}
-          <DriverSaleModalHeader mode={mode}/>
+            <DriverSaleModalHeader
+                driver={driver}
+                mode={mode}
+                icon={modalConfig.icon}
+                iconBorderColor={modalConfig.iconBorderColor}
+                iconBgColor={modalConfig.iconBgColor}
+                title={modalConfig.title}
+                subtitle={modalConfig.subtitle}
+                onCancel={() => onCancel(null)}
+            />
 
           {/* Content */}
           <div className="px-5 py-3 space-y-2.5">
             {/* Driver Info */}
-            <DriverSaleModalInfo mode={mode} />
+            <DriverSaleModalInfo driver={driver} />
 
             {/* Transaction Details */}
-            <TransactionDetails mode={mode}/>
+            <TransactionDetails 
+                mode={mode}
+                driver={driver}
+                acquisitionPrice={acquisitionPrice}
+                inputValue={inputValue}
+                error={error}
+                profit={profit}
+                profitPercentage={profitPercentage}
+                handlePriceChange={handlePriceChange}
+                handlePresetClick={handlePresetClick}
+                isListing={marketContext.isListing}
+                userBudget={marketContext.userBudget}
+                price={price}
+                budgetAfter={budgetAfter}
+                refundAmount={refundAmount}
+                loss={loss}
+            />
 
             {/* Validation Warning - only for sell/list modes */}
             {!canProceed && mode !== 'buyDriver' && (
@@ -98,7 +114,7 @@ export const DriverSaleModal = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className="text-blue-300 text-[11px]">
-                  {config.infoText}
+                  {modalConfig.infoText}
                 </p>
               </div>
             </div>
@@ -111,8 +127,8 @@ export const DriverSaleModal = ({
             canProceed={canProceed}
             error={error}
             customPrice={customPrice}
-            buttonColor={config.buttonColor}
-            buttonText={config.buttonText}
+            buttonColor={modalConfig.buttonColor}
+            buttonText={modalConfig.buttonText}
             onCancel={() => onCancel(null)}
             onConfirm={handleConfirm}
           />

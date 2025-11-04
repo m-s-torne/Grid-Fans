@@ -15,7 +15,7 @@ export type ActiveTab = 'free' | 'for-sale' | 'my-drivers'
 export const useMarketStates = () => {
   const [expandedDriver, setExpandedDriver] = useState<DriverWithOwnership | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<ActiveTab | null>('free');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('free');
   const [buyModalDriver, setBuyModalDriver] = useState<DriverWithOwnership | null>(null);
   const [sellModalDriver, setSellModalDriver] = useState<DriverWithOwnership | null>(null);
   const [listModalDriver, setListModalDriver] = useState<DriverWithOwnership | null>(null);

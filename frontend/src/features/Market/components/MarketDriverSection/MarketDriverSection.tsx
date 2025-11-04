@@ -1,22 +1,19 @@
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
-import { MarketDriverList } from '@/features/Market/components';
+import { MarketDriverList } from './MarketDriverList';
 import { useMarketContext } from '@/core/contexts/MarketContext';
 
+const titleMap = {
+    'free': 'Free Agent Drivers',
+    'for-sale': 'Drivers For Sale',
+    'my-drivers': 'My Drivers',
+}
+
 const MarketDriverSection = () => {
-    const {
-        activeTab,
-        filteredDrivers,
-        sensors,
-        handleDragEnd,
-    } = useMarketContext()
+    const marketContext = useMarketContext()
 
     // Compute title based on active tab
-    const title = {
-        'free': 'Free Agent Drivers',
-        'for-sale': 'Drivers For Sale',
-        'my-drivers': 'My Drivers',
-    }[activeTab?? 'free'];
+    const title = titleMap[marketContext.activeTab?? 'free'];
 
     return (
         <div className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6">
@@ -26,28 +23,30 @@ const MarketDriverSection = () => {
                     {title}
                 </h2>
                 <p className="text-gray-400 text-xs sm:text-sm lg:text-base">
-                    {filteredDrivers.length} {filteredDrivers.length === 1 ? 'driver' : 'drivers'}
+                    {marketContext.filteredDrivers.length} {marketContext.filteredDrivers.length === 1 ? 'driver' : 'drivers'}
                 </p>
             </div>
 
             {/* Driver List - with or without DnD */}
-            {activeTab === 'my-drivers' ? (
+            {marketContext.activeTab === 'my-drivers' ? (
                 <DndContext
-                    sensors={sensors}
+                    sensors={marketContext.sensors}
                     collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
+                    onDragEnd={marketContext.handleDragEnd}
                 >
                     <SortableContext
-                        items={filteredDrivers.map(d => `driver-${d.id}`)}
+                        items={marketContext.filteredDrivers.map(d => `driver-${d.id}`)}
                     >
                         <MarketDriverList
-                            drivers={filteredDrivers}
                             enableDragDrop={true}
+                            marketContext={marketContext}
                         />
                     </SortableContext>
                 </DndContext>
             ) : (
-                <MarketDriverList drivers={filteredDrivers} />
+                <MarketDriverList 
+                    marketContext={marketContext}
+                />
             )}
         </div>
     );

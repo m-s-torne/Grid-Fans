@@ -5,31 +5,40 @@ import { PriceDisplay } from './PriceDisplay';
 import { useState } from 'react';
 import { useDriverActionButton } from '@/features/Market/hooks';
 import { calculateDriverPricing, determineDriverAction, getDriverLastName } from '@/features/Market/utils';
-import { useMarketContext } from '@/core/contexts/MarketContext';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+import type { SetStateFunction } from '@/core/contexts/MarketContext';
 
-interface MarketDriverCardProps {
+export interface MarketDriverCardProps {
   driver: DriverWithOwnership;
   loading?: boolean;
+  reserveDriverId: number | null;
+  internalUserId: number;
+  userBudget: number;
+  userDriverCount: number;
+  handleBuyFromMarket: (driverId: number) => void;
+  handleBuyFromUser: (driverId: number) => void;
+  handleSell: (driverId: number) => void;
+  handleList: (driverId: number) => void;
+  handleUnlist: (driverId: number) => void;
+  handleBuyout: (driverId: number) => void;
+  setExpandedDriver: SetStateFunction<DriverWithOwnership | null>;
 }
 
 export const MarketDriverCard = ({
   driver,
   loading = false,
+  reserveDriverId,
+  internalUserId,
+  userBudget,
+  userDriverCount,
+  handleBuyFromMarket,
+  handleBuyFromUser,
+  handleSell,
+  handleList,
+  handleUnlist,
+  handleBuyout,
+  setExpandedDriver,
 }: MarketDriverCardProps) => {
-  const {
-    internalUserId,
-    userBudget,
-    userDriverCount,
-    userTeam,
-    handleBuyFromMarket,
-    handleBuyFromUser,
-    handleSell,
-    handleList,
-    handleUnlist,
-    handleBuyout,
-    setExpandedDriver,
-  } = useMarketContext()
 
   const [showSellMenu, setShowSellMenu] = useState(false);
 
@@ -42,7 +51,7 @@ export const MarketDriverCard = ({
   // Extract commonly used values
   const { basePrice, displayPrice, buyoutPrice, isFreeAgent, isOwnedByMe, isOwnedByOther, isLocked, isForSale } = pricing;
   const ownership = driver.ownership;
-  const isReserve = isOwnedByMe && userTeam!.reserve_driver_id === driver.id;
+  const isReserve = isOwnedByMe && reserveDriverId === driver.id;
 
   // Hook: Render action button (JSX)
   const { renderActionButton } = useDriverActionButton({

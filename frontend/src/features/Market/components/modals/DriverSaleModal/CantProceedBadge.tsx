@@ -1,4 +1,4 @@
-type ModalMode = 'quickSell' | 'listForSale' | 'buyDriver';
+import type { ModalMode } from "./modalConfig";
 
 interface CantProceedBadgeProps {
   mode: ModalMode;

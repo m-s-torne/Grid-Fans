@@ -1,24 +1,26 @@
-import { useMarketContext } from '@/core/contexts/MarketContext';
-import { useDriverSaleModal } from '@/features/Market/hooks';
 import { formatCurrencyPrecise } from '@/features/Market/utils';
 
-export const ListForSaleContent = () => {
-  const mode = 'listForSale'
+export interface ListForSaleContentProps {
+  acquisitionPrice: number;
+  inputValue: string;
+  error: string | null;
+  profit: number;
+  profitPercentage: string;
+  handlePriceChange: (value: string) => void;
+  handlePresetClick: (multiplier: number) => void;
+  isListing: boolean;
+}
 
-  const {
-    isListing: loading,
-    listModalDriver: driver,
-  } = useMarketContext()
-
-  const {
-    acquisitionPrice,
-    inputValue,
-    error,
-    profit,
-    profitPercentage,
-    handlePriceChange,
-    handlePresetClick
-  } = useDriverSaleModal({ driver, mode })
+export const ListForSaleContent = ({ 
+  acquisitionPrice,
+  inputValue,
+  error,
+  profit,
+  profitPercentage,
+  handlePriceChange,
+  handlePresetClick,
+  isListing
+}: ListForSaleContentProps) => {
 
   return (
     <>
@@ -45,7 +47,7 @@ export const ListForSaleContent = () => {
             onChange={(e) => handlePriceChange(e.target.value)}
             className="w-full pl-7 pr-10 py-1.5 bg-gray-900 border border-gray-600 rounded-lg text-white text-sm font-medium focus:outline-none focus:border-yellow-500 transition-colors"
             placeholder="0.0"
-            disabled={loading}
+            disabled={isListing}
           />
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]">
             M
@@ -62,28 +64,28 @@ export const ListForSaleContent = () => {
       <div className="grid grid-cols-4 gap-1.5">
         <button
           onClick={() => handlePresetClick(0.9)}
-          disabled={loading}
+          disabled={isListing}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           -10%
         </button>
         <button
           onClick={() => handlePresetClick(1.05)}
-          disabled={loading}
+          disabled={isListing}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           +5%
         </button>
         <button
           onClick={() => handlePresetClick(1.1)}
-          disabled={loading}
+          disabled={isListing}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           +10%
         </button>
         <button
           onClick={() => handlePresetClick(1.2)}
-          disabled={loading}
+          disabled={isListing}
           className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-[10px] text-white transition-colors"
         >
           +20%

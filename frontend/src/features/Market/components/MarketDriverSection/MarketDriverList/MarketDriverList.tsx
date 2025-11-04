@@ -2,40 +2,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MarketDriverCard } from './MarketDriverCard';
 import { DraggableCard } from './DraggableCard';
 import { DraggableReserveSlot } from './DraggableReserveSlot';
-import { useMarketContext } from '@/core/contexts/MarketContext'
-import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+import type { MarketContext } from '@/core/contexts/MarketContext';
 
-interface MarketDriverListProps {
-  drivers: DriverWithOwnership[];
+export interface MarketDriverListProps {
   gridColumns?: 2 | 3 | 4;
   enableDragDrop?: boolean;
+  marketContext: MarketContext;
 }
 
 export const MarketDriverList = ({
-  drivers,
   gridColumns = 4 as const,
   enableDragDrop = false,
+  marketContext,
 }: MarketDriverListProps) => {
-  const {
-    activeTab,
-    freeDriversLoading,
-    forSaleLoading,
-    myDriversLoading,
-    userTeam,
-    searchQuery,
-  } = useMarketContext()
 
-  const reserveDriverId = userTeam!.reserve_driver_id
-
-  const loading = activeTab === 'free' ? freeDriversLoading : 
-                        activeTab === 'for-sale' ? forSaleLoading : 
-                        myDriversLoading
+  const loading = marketContext.activeTab === 'free' ? marketContext.freeDriversLoading : 
+                        marketContext.activeTab === 'for-sale' ? marketContext.forSaleLoading : 
+                        marketContext.myDriversLoading
 
   const getEmptyMessage = () => {
-      if (searchQuery) return "No drivers match your search";
+      if (marketContext.searchQuery) return "No drivers match your search";
       
-      if (activeTab === 'my-drivers') return "You don't own any drivers yet";
-      if (activeTab === 'free') return "No free agents available";
+      if (marketContext.activeTab === 'my-drivers') return "You don't own any drivers yet";
+      if (marketContext.activeTab === 'free') return "No free agents available";
       return "No drivers for sale available";
   };
   // Loading skeletons
@@ -71,7 +60,7 @@ export const MarketDriverList = ({
   }
 
   // Empty state
-  if (drivers.length === 0) {
+  if (marketContext.filteredDrivers.length === 0) {
     return (
       <div className="text-center py-8 sm:py-12">
         <svg
@@ -96,8 +85,8 @@ export const MarketDriverList = ({
   // Driver grid
   // Special layout when drag & drop is enabled (My Drivers tab)
   if (enableDragDrop) {
-    const mainDrivers = drivers.filter(d => d.id !== reserveDriverId);
-    const reserveDriver = drivers.find(d => d.id === reserveDriverId);
+    const mainDrivers = marketContext.filteredDrivers.filter(d => d.id !== marketContext.userTeam!.reserve_driver_id);
+    const reserveDriver = marketContext.filteredDrivers.find(d => d.id === marketContext.userTeam!.reserve_driver_id);
 
     return (
       <div>
@@ -120,7 +109,10 @@ export const MarketDriverList = ({
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <DraggableCard driver={driver} />
+                  <DraggableCard 
+                    driver={driver}
+                    marketContext={marketContext}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -128,7 +120,11 @@ export const MarketDriverList = ({
         </div>
 
         {/* Reserve Driver Section */}
-        <DraggableReserveSlot driver={reserveDriver!} />
+        <DraggableReserveSlot 
+          driver={reserveDriver!}
+          marketContext={marketContext}
+          loading={loading}
+        />
       </div>
     );
   }
@@ -141,7 +137,7 @@ export const MarketDriverList = ({
       'grid-cols-1 sm:grid-cols-2'
     }`}>
       <AnimatePresence mode="popLayout">
-        {drivers.map((driver) => (
+        {marketContext.filteredDrivers.map((driver) => (
           <motion.div
             key={driver.id}
             initial={{ opacity: 0, scale: 0.9 }}
@@ -149,7 +145,21 @@ export const MarketDriverList = ({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
           >
-            <MarketDriverCard driver={driver}/>
+            <MarketDriverCard 
+              driver={driver}
+              loading={loading}
+              userBudget={marketContext.userBudget}
+              userDriverCount={marketContext.userDriverCount}
+              handleBuyFromMarket={marketContext.handleBuyFromMarket}
+              handleBuyFromUser={marketContext.handleBuyFromUser}
+              handleSell={marketContext.handleSell}
+              handleList={marketContext.handleList}
+              handleUnlist={marketContext.handleUnlist}
+              handleBuyout={marketContext.handleBuyout}
+              setExpandedDriver={marketContext.setExpandedDriver}
+              reserveDriverId={marketContext.userTeam!.reserve_driver_id}
+              internalUserId={marketContext.internalUserId}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

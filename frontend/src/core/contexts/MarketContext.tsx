@@ -22,24 +22,24 @@ import type { SensorDescriptor, SensorOptions } from '@dnd-kit/core/dist/sensors
 import type { UseMarketHandlersParams, UseMarketHandlersReturn } from '@/features/Market/hooks/useMarketHandlers/useMarketHandlers';
 import type { DragEndEvent } from '@dnd-kit/core';
 
-type SetStateFunction<T> = Dispatch<SetStateAction<T | null>>
+export type SetStateFunction<T> = Dispatch<SetStateAction<T>>
 
 interface MarketStates {
     expandedDriver: DriverWithOwnership | null;
-    setExpandedDriver: SetStateFunction<DriverWithOwnership>;
+    setExpandedDriver: SetStateFunction<DriverWithOwnership | null>;
     searchQuery: string;
-    setSearchQuery: Dispatch<SetStateAction<string>>;
+    setSearchQuery: SetStateFunction<string>;
     buyModalDriver: DriverWithOwnership | null;
-    setBuyModalDriver: SetStateFunction<DriverWithOwnership>;
+    setBuyModalDriver: SetStateFunction<DriverWithOwnership | null>;
     sellModalDriver: DriverWithOwnership | null;
-    setSellModalDriver: SetStateFunction<DriverWithOwnership>;
+    setSellModalDriver: SetStateFunction<DriverWithOwnership | null>;
     listModalDriver: DriverWithOwnership | null;
-    setListModalDriver: SetStateFunction<DriverWithOwnership>;
+    setListModalDriver: SetStateFunction<DriverWithOwnership | null>;
     dialog: Dialog;
-    setDialog: Dispatch<SetStateAction<Dialog>>;
+    setDialog: SetStateFunction<Dialog>;
     sortedMyDrivers: DriverWithOwnership[];
     activeTab: ActiveTab | null;
-    setActiveTab: SetStateFunction<ActiveTab | null>
+    setActiveTab: SetStateFunction<ActiveTab>
 }
 
 interface MarketDataFetch {

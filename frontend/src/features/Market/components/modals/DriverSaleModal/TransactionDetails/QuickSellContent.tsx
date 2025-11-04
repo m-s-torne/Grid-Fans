@@ -1,19 +1,18 @@
-import { useMarketContext } from '@/core/contexts/MarketContext';
 import { useDriverSaleModal } from '@/features/Market/hooks';
 import { formatCurrencyPrecise } from '@/features/Market/utils';
+import type { TransactionDetailsProps } from './TransactionDetails';
 
-export const QuickSellContent = () => {
-  const mode = 'quickSell'
+export interface QuickSellContentProps {
+  acquisitionPrice: number;
+  refundAmount: number;
+  loss: number;
+}
 
-  const {
-    sellModalDriver: driver
-  } = useMarketContext()
-
-  const {
-    acquisitionPrice,
-    refundAmount,
-    loss
-  } = useDriverSaleModal({ driver, mode })
+export const QuickSellContent = ({
+  acquisitionPrice,
+  refundAmount,
+  loss,
+}: TransactionDetailsProps) => {
 
   return (
     <div className="bg-gray-700/30 rounded-lg p-3 border border-gray-600/50">

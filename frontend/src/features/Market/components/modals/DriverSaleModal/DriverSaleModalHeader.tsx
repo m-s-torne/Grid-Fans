@@ -1,56 +1,48 @@
 import { useMarketContext } from '@/core/contexts/MarketContext';
 import { useDriverSaleModal } from '@/features/Market/hooks';
 import type { ModalMode } from './modalConfig';
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+import type { JSX } from 'react';
 
 interface DriverSaleModalHeaderProps {
   mode: ModalMode;
+  driver: DriverWithOwnership;
+  icon: string | JSX.Element;
+  iconBgColor: string;
+  iconBorderColor: string;
+  title: string;
+  subtitle: string;
+  onCancel: () => void;
 }
 
 export const DriverSaleModalHeader = ({
-  mode
+  mode,
+  icon,
+  title,
+  subtitle,
+  iconBgColor,
+  iconBorderColor,
+  onCancel,
 }: DriverSaleModalHeaderProps) => {
-  const {
-    buyModalDriver,
-    sellModalDriver,
-    listModalDriver,
-    setBuyModalDriver,
-    setSellModalDriver,
-    setListModalDriver
-  } = useMarketContext()
-
-  const onCancel = mode === 'buyDriver' ? () => setBuyModalDriver(null)
-    : mode === 'quickSell' ? () => setSellModalDriver(null)
-    : () => setListModalDriver(null)
-
-  const driver = mode === 'buyDriver' 
-    ? buyModalDriver
-    : mode === 'quickSell'
-    ? sellModalDriver
-    : mode === 'listForSale'
-    ? listModalDriver : null
-
-  const {
-    config
-  } = useDriverSaleModal({ driver, mode })
 
   return (
     <div className="px-5 py-4 border-b border-gray-700">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           {mode === 'quickSell' || mode === 'buyDriver' ? (
-            <div className={`w-10 h-10 rounded-full ${config.iconBgColor} border ${config.iconBorderColor} flex items-center justify-center`}>
-              {typeof config.icon === 'string' ? (
-                <span className="text-xl">{config.icon}</span>
+            <div className={`w-10 h-10 rounded-full ${iconBgColor} border ${iconBorderColor} flex items-center justify-center`}>
+              {typeof icon === 'string' ? (
+                <span className="text-xl">{icon}</span>
               ) : (
-                config.icon
+                icon
               )}
             </div>
           ) : (
-            <div className="text-2xl">{config.icon}</div>
+            <div className="text-2xl">{icon}</div>
           )}
           <div>
-            <h2 className="text-xl font-bold text-white">{config.title}</h2>
-            <p className="text-gray-400 text-xs">{config.subtitle}</p>
+            <h2 className="text-xl font-bold text-white">{title}</h2>
+            <p className="text-gray-400 text-xs">{subtitle}</p>
           </div>
         </div>
         <button

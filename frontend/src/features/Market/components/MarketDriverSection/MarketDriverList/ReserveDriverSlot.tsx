@@ -2,8 +2,9 @@ import { motion } from 'framer-motion';
 import { MarketDriverCard } from './MarketDriverCard';
 import type { DriverWithOwnership, MarketComponentBaseProps } from '@/features/Market/types/marketTypes';
 import type { CSSProperties } from 'react';
+import type { MarketContext } from '@/core/contexts/MarketContext';
 
-interface ReserveDriverSlotProps extends MarketComponentBaseProps {
+interface ReserveDriverSlotProps {
   driver: DriverWithOwnership | null;
   isEmpty?: boolean;
   dragRef?: (element: HTMLElement | null) => void;
@@ -12,6 +13,8 @@ interface ReserveDriverSlotProps extends MarketComponentBaseProps {
   dragListeners?: any;
   isDragging?: boolean;
   isSwapping?: boolean;
+  marketContext: MarketContext;
+  loading: boolean;
 }
 
 export const ReserveDriverSlot = ({
@@ -23,6 +26,8 @@ export const ReserveDriverSlot = ({
   dragListeners,
   isDragging = false,
   isSwapping = false,
+  marketContext,
+  loading= false,
 }: ReserveDriverSlotProps) => {
 
   return (
@@ -107,7 +112,21 @@ export const ReserveDriverSlot = ({
                     {...dragListeners}
                     className="rounded-xl overflow-hidden touch-none cursor-grab active:cursor-grabbing"
                   >
-                    <MarketDriverCard driver={driver}/>
+                    <MarketDriverCard
+                      driver={driver}
+                      loading={loading}
+                      userBudget={marketContext.userBudget}
+                      userDriverCount={marketContext.userDriverCount}
+                      handleBuyFromMarket={marketContext.handleBuyFromMarket}
+                      handleBuyFromUser={marketContext.handleBuyFromUser}
+                      handleSell={marketContext.handleSell}
+                      handleList={marketContext.handleList}
+                      handleUnlist={marketContext.handleUnlist}
+                      handleBuyout={marketContext.handleBuyout}
+                      setExpandedDriver={marketContext.setExpandedDriver}
+                      reserveDriverId={marketContext.userTeam!.reserve_driver_id}
+                      internalUserId={marketContext.internalUserId}
+                    />
                   </div>
                 </div>
             

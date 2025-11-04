@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { 
     DriverCardExpanded, 
     DriverSaleModal,
@@ -12,34 +12,10 @@ import { useMarketContext } from '@/core/contexts/MarketContext';
 
 const Market = () => {
     const navigate = useNavigate();
-    const {
-        leagueLoading,
-        freeDriversLoading,
-        forSaleLoading,
-        myDriversLoading,
-        teamLoading,
-        leagueError,
-        league,
-        setExpandedDriver,
-        expandedDriver,
-        buyModalDriver,
-        setBuyModalDriver,
-        confirmSell,
-        confirmBuyFromMarket,
-        setSellModalDriver,
-        confirmList,
-        setListModalDriver,
-        setDialog,
-        dialog,
-        isBuyingFromMarket,
-        sellModalDriver,
-        isSellingToMarket,
-        listModalDriver,
-        isListing,
-    } = useMarketContext()
+    const marketContext = useMarketContext()
 
     // Loading state
-    if (leagueLoading || freeDriversLoading || forSaleLoading || myDriversLoading || teamLoading) {
+    if (marketContext.leagueLoading || marketContext.freeDriversLoading || marketContext.forSaleLoading || marketContext.myDriversLoading || marketContext.teamLoading) {
         return (
             <div className="p-4 sm:p-6">
                 <div className="max-w-7xl mx-auto">
@@ -55,7 +31,7 @@ const Market = () => {
     }
 
     // Error state
-    if (leagueError || !league) {
+    if (marketContext.leagueError || !marketContext.league) {
         return (
             <div className="p-4 sm:p-6">
                 <div className="max-w-7xl mx-auto">
@@ -81,30 +57,42 @@ const Market = () => {
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <MarketHeader/>
+                <MarketHeader
+                    leagueId={marketContext.leagueId} 
+                    league={marketContext.league}
+                    userBudget={marketContext.userBudget}
+                    userDriverCount={marketContext.userDriverCount}
+                    navigate={navigate}
+                />
 
                 {/* Tabs & Search */}
-                <MarketTabs/>
+                <MarketTabs
+                    activeTab={marketContext.activeTab}
+                    setActiveTab={marketContext.setActiveTab}
+                    searchQuery={marketContext.searchQuery}
+                    setSearchQuery={marketContext.setSearchQuery}
+                    freeDrivers={marketContext.freeDrivers}
+                    forSaleDrivers={marketContext.forSaleDrivers}
+                    myDrivers={marketContext.myDrivers}
+                />
 
                 {/* Driver List Section */}
                 <MarketDriverSection />
             </div>
 
             {/* Expanded Driver Modal */}
-            <AnimatePresence>
-                {expandedDriver && (
-                    <div>
-                        <DriverCardExpanded
-                            key={expandedDriver.id}
-                            d={expandedDriver as any}
-                            setExpanded={() => setExpandedDriver(null)}
-                        />
-                    </div>
-                )}
-            </AnimatePresence>
+            {marketContext.expandedDriver && (
+                <AnimatePresence>
+                    <DriverCardExpanded
+                        key={marketContext.expandedDriver.id}
+                        d={marketContext.expandedDriver as any}
+                        setExpanded={() => marketContext.setExpandedDriver(null)}
+                    />
+                </AnimatePresence>
+            )}
 
             {/* Buy Driver Modal */}
-            {buyModalDriver && (
+            {marketContext.buyModalDriver && (
                 <AnimatePresence>
                     <DriverSaleModal
                         mode="buyDriver"
@@ -113,7 +101,7 @@ const Market = () => {
             )}
 
             {/* Sell Driver Modal */}
-            {sellModalDriver && (
+            {marketContext.sellModalDriver && (
                 <AnimatePresence>
                     <DriverSaleModal
                         mode="quickSell"
@@ -123,7 +111,7 @@ const Market = () => {
             
 
             {/* List for Sale Modal */}
-            {listModalDriver && (
+            {marketContext.listModalDriver && (
                 <AnimatePresence>
                     <DriverSaleModal
                         mode="listForSale"
@@ -133,13 +121,13 @@ const Market = () => {
 
             {/* Confirm/Success/Error Dialog */}
             <ConfirmDialog
-                isOpen={dialog.isOpen}
-                onClose={() => setDialog({ ...dialog, isOpen: false })}
-                onConfirm={dialog.onConfirm}
-                title={dialog.title}
-                message={dialog.message}
-                type={dialog.type}
-                confirmText={dialog.confirmText}
+                isOpen={marketContext.dialog.isOpen}
+                onClose={() => marketContext.setDialog({ ...marketContext.dialog, isOpen: false })}
+                onConfirm={marketContext.dialog.onConfirm}
+                title={marketContext.dialog.title}
+                message={marketContext.dialog.message}
+                type={marketContext.dialog.type}
+                confirmText={marketContext.dialog.confirmText}
             />
         </div>
     );

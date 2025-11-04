@@ -1,16 +1,27 @@
 import { SearchInput } from '@/core/components';
-import { useMarketContext } from '@/core/contexts/MarketContext';
+import type { SetStateFunction } from '@/core/contexts/MarketContext';
+import type { ActiveTab } from '@/features/Market/hooks/useMarketState';
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 
-export const MarketTabs = () => {
-    const {
-        activeTab,
-        setActiveTab,
-        searchQuery,
-        setSearchQuery,
-        freeDrivers,
-        forSaleDrivers,
-        myDrivers
-    } = useMarketContext()
+interface MarketTabsProp {
+    activeTab: ActiveTab | null;
+    setActiveTab: SetStateFunction<ActiveTab>;
+    searchQuery: string;
+    setSearchQuery: SetStateFunction<string>;
+    freeDrivers: DriverWithOwnership[] | undefined;
+    forSaleDrivers: DriverWithOwnership[] | undefined;
+    myDrivers: DriverWithOwnership[] | undefined;
+}
+
+export const MarketTabs = ({
+    activeTab,
+    setActiveTab,
+    searchQuery,
+    setSearchQuery,
+    freeDrivers,
+    forSaleDrivers,
+    myDrivers
+}: MarketTabsProp) => {
 
     return (
         <div className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
