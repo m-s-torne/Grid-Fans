@@ -37,9 +37,9 @@ interface MarketStates {
     setListModalDriver: SetStateFunction<DriverWithOwnership | null>;
     dialog: Dialog;
     setDialog: SetStateFunction<Dialog>;
-    sortedMyDrivers: DriverWithOwnership[];
     activeTab: ActiveTab | null;
     setActiveTab: SetStateFunction<ActiveTab>
+    filteredDrivers: DriverWithOwnership[];
 }
 
 interface MarketDataFetch {
@@ -55,6 +55,7 @@ interface MarketDataFetch {
     teamLoading: boolean;
     myDrivers: DriverWithOwnership[] | undefined;
     myDriversLoading: boolean;
+    sortedMyDrivers: DriverWithOwnership[];
 }
 
 type MutateFunction<T, U> = UseMutateFunction<T, Error, U, unknown>
@@ -70,24 +71,27 @@ interface MarketMutations {
     unlistFromSale: MutateFunction<ListDriverResponse, UnlistDriverMutation>;
 }
 
+export type SwappingIds = {
+    mainDriver: number;
+    reserve: number;
+}
+
 interface DragAndDropVariables {
     sensors: SensorDescriptor<SensorOptions>[];
-    swappingDriverIds: {
-        mainDriver: number;
-        reserve: number;
-    } | null;
+    swappingDriverIds: SwappingIds | null;
     handleDragEnd: (event: DragEndEvent) => Promise<void>;
 }
 
-interface MarketComputedData {
-    internalUserId: number;
+export interface UserState {
     userDriverCount: number;
     userBudget: number;
-    filteredDrivers: DriverWithOwnership[];
+    internalUserId: number;
 }
 
-export interface MarketContext extends MarketStates, MarketDataFetch, MarketMutations, DragAndDropVariables, MarketComputedData {
+export interface MarketContext extends MarketDataFetch, MarketMutations, DragAndDropVariables {
     handlers:  UseMarketHandlersReturn;
+    state: MarketStates;
+    userState: UserState;
 }
 
 const MarketContext = createContext<MarketContext | null>(null)
@@ -98,15 +102,7 @@ interface MarketProviderProps {
 
 export const MarketProvider = ({ children }: MarketProviderProps) => {
     const { leagueId } = useParams<{ leagueId: string }>();
-    const {
-        expandedDriver, setExpandedDriver,
-        searchQuery, setSearchQuery,
-        activeTab, setActiveTab,
-        buyModalDriver, setBuyModalDriver,
-        sellModalDriver, setSellModalDriver,
-        listModalDriver, setListModalDriver,
-        dialog, setDialog
-    } = useMarketStates()
+    const state = useMarketStates();
 
     // Fetch data
     const { league, isLoading: leagueLoading, error: leagueError } = useLeagueDetail(leagueId || '');
@@ -164,14 +160,14 @@ export const MarketProvider = ({ children }: MarketProviderProps) => {
         sellToMarket,
         listForSale,
         unlistFromSale,
-        setBuyModalDriver,
-        setSellModalDriver,
-        setListModalDriver,
-        setDialog,
-        dialog,
-        buyModalDriver,
-        sellModalDriver,
-        listModalDriver,
+        setBuyModalDriver: state.setBuyModalDriver,
+        setSellModalDriver: state.setSellModalDriver,
+        setListModalDriver: state.setListModalDriver,
+        setDialog: state.setDialog,
+        dialog: state.dialog,
+        buyModalDriver: state.buyModalDriver,
+        sellModalDriver: state.sellModalDriver,
+        listModalDriver: state.listModalDriver,
     });
 
     // Filter drivers by search query
@@ -179,50 +175,31 @@ export const MarketProvider = ({ children }: MarketProviderProps) => {
         freeDrivers,
         forSaleDrivers,
         sortedMyDrivers,
-        activeTab,
-        searchQuery,
+        activeTab: state.activeTab,
+        searchQuery: state.searchQuery,
     });
-
-    /*const { renderActionButton } = useDriverActionButton({
-        pricing,
-        actions,
-        loading,
-        driverId: driver.id,
-        showSellMenu,
-        setShowSellMenu,
-        handleBuyFromMarket,
-        handleBuyFromUser,
-        handleSell,
-        handleList,
-        handleUnlist,
-        handleBuyout,
-    });*/
     
     const value: MarketContext = {
         leagueId,
-        expandedDriver, setExpandedDriver,
-        searchQuery, setSearchQuery,
-        activeTab, setActiveTab,
-        buyModalDriver, setBuyModalDriver,
-        sellModalDriver, setSellModalDriver,
-        listModalDriver, setListModalDriver,
-        dialog, setDialog,
+        state: {...state, filteredDrivers},
         handlers: {...marketHandlers},
+        userState: {
+            userDriverCount,
+            userBudget,
+            internalUserId,
+        },
         league, leagueLoading, leagueError,
         freeDrivers, freeDriversLoading,
         forSaleDrivers, forSaleLoading,
         userTeam, teamLoading,
-        internalUserId,
         myDrivers, myDriversLoading,
-        userDriverCount, userBudget,
-        sortedMyDrivers,
         buyFromMarket, isBuyingFromMarket,
         buyFromUser,
         sellToMarket, isSellingToMarket,
         listForSale, isListing,
         unlistFromSale,
-        sensors, swappingDriverIds, handleDragEnd,
-        filteredDrivers
+        sensors, swappingDriverIds, 
+        handleDragEnd, sortedMyDrivers
     }
 
     return (

@@ -1,11 +1,8 @@
 import { motion } from 'framer-motion';
-import { MarketDriverCard } from './MarketDriverCard';
-import type { DriverWithOwnership, MarketComponentBaseProps } from '@/features/Market/types/marketTypes';
+import { MarketDriverCard, type MarketDriverCardProps } from './MarketDriverCard';
 import type { CSSProperties } from 'react';
-import type { MarketContext } from '@/core/contexts/MarketContext';
 
-interface ReserveDriverSlotProps {
-  driver: DriverWithOwnership | null;
+interface ReserveDriverSlotProps extends MarketDriverCardProps {
   isEmpty?: boolean;
   dragRef?: (element: HTMLElement | null) => void;
   dragStyle?: CSSProperties;
@@ -13,7 +10,6 @@ interface ReserveDriverSlotProps {
   dragListeners?: any;
   isDragging?: boolean;
   isSwapping?: boolean;
-  marketContext: MarketContext;
   loading: boolean;
 }
 
@@ -26,7 +22,10 @@ export const ReserveDriverSlot = ({
   dragListeners,
   isDragging = false,
   isSwapping = false,
-  marketContext,
+  reserveDriverId,
+  userState,
+  handlers,
+  setExpandedDriver,
   loading= false,
 }: ReserveDriverSlotProps) => {
 
@@ -115,17 +114,10 @@ export const ReserveDriverSlot = ({
                     <MarketDriverCard
                       driver={driver}
                       loading={loading}
-                      userBudget={marketContext.userBudget}
-                      userDriverCount={marketContext.userDriverCount}
-                      handleBuyFromMarket={marketContext.handleBuyFromMarket}
-                      handleBuyFromUser={marketContext.handleBuyFromUser}
-                      handleSell={marketContext.handleSell}
-                      handleList={marketContext.handleList}
-                      handleUnlist={marketContext.handleUnlist}
-                      handleBuyout={marketContext.handleBuyout}
-                      setExpandedDriver={marketContext.setExpandedDriver}
-                      reserveDriverId={marketContext.userTeam!.reserve_driver_id}
-                      internalUserId={marketContext.internalUserId}
+                      reserveDriverId={reserveDriverId}
+                      userState={userState}
+                      handlers={handlers}
+                      setExpandedDriver={setExpandedDriver}
                     />
                   </div>
                 </div>

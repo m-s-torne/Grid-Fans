@@ -1,13 +1,22 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 import { ReserveDriverSlot } from "./ReserveDriverSlot";
-import type { DraggableCardProps } from "./DraggableCard";
+import type { SwappingIds } from "@/core/contexts/MarketContext";
+import type { MarketDriverCardProps } from "./MarketDriverCard";
 
-interface DraggableReserveSlotProps extends DraggableCardProps {
+interface DraggableReserveSlotProps extends MarketDriverCardProps {
     loading: boolean;
+    swappingDriverIds: SwappingIds | null;
 }
 
-export const DraggableReserveSlot = ({ driver, marketContext, loading = false }: DraggableReserveSlotProps) => {
+export const DraggableReserveSlot = ({ 
+    driver, 
+    swappingDriverIds,
+    userState,
+    handlers,
+    setExpandedDriver, 
+    loading = false
+}: DraggableReserveSlotProps) => {
     const reserveDriverId = driver?.id
 
     const {
@@ -29,8 +38,9 @@ export const DraggableReserveSlot = ({ driver, marketContext, loading = false }:
     };
 
     // Check if reserve driver is being swapped
-    const isSwapping = marketContext.swappingDriverIds && driver &&
-    (marketContext.swappingDriverIds.mainDriver === driver.id || marketContext.swappingDriverIds.reserve === driver.id);
+    const isSwapping = swappingDriverIds && driver &&
+    (swappingDriverIds.mainDriver === driver.id || swappingDriverIds.reserve === driver.id);
+
 
     return (
         <ReserveDriverSlot
@@ -40,10 +50,13 @@ export const DraggableReserveSlot = ({ driver, marketContext, loading = false }:
             dragStyle={driver ? dragStyle : undefined}
             dragAttributes={driver ? attributes : undefined}
             dragListeners={driver ? listeners : undefined}
+            loading={loading}
             isDragging={isDragging}
             isSwapping={isSwapping ?? undefined}
-            marketContext={marketContext}
-            loading={loading}
+            reserveDriverId={reserveDriverId ?? null}
+            userState={userState}
+            handlers={handlers}
+            setExpandedDriver={setExpandedDriver}     
         />
     );
 };

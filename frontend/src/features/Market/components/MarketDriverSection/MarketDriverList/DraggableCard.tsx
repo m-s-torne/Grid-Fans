@@ -2,18 +2,26 @@ import type { DriverWithOwnership } from "@/features/Market/types/marketTypes";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 import { DriverSkeleton } from "./DriverSkeleton";
-import { MarketDriverCard } from "./MarketDriverCard";
-import type { MarketContext } from "@/core/contexts/MarketContext";
+import { MarketDriverCard, type MarketDriverCardProps } from "./MarketDriverCard";
+import type { UseMarketHandlersReturn } from "@/features/Market/hooks/useMarketHandlers/useMarketHandlers";
+import type { SwappingIds } from "@/core/contexts/MarketContext";
 
-export interface DraggableCardProps {
+export interface DraggableCardProps extends MarketDriverCardProps {
     driver: DriverWithOwnership;
-    marketContext: MarketContext;
+    handlers: UseMarketHandlersReturn;
+    reserveDriverId: number | null;
+    swappingDriverIds: SwappingIds | null;
 }
 
 export const DraggableCard = ({ 
     driver,
-    marketContext,
+    handlers,
+    reserveDriverId,
+    swappingDriverIds,
+    userState,
+    setExpandedDriver,
 }: DraggableCardProps) => {
+    
     const {
         attributes,
         listeners,
@@ -27,8 +35,8 @@ export const DraggableCard = ({
     });
 
     // Check if this driver is being swapped
-    const isSwapping = marketContext.swappingDriverIds && 
-        (marketContext.swappingDriverIds.mainDriver === driver.id || marketContext.swappingDriverIds.reserve === driver.id);
+    const isSwapping = swappingDriverIds && 
+        (swappingDriverIds.mainDriver === driver.id || swappingDriverIds.reserve === driver.id);
 
     // Only apply transform to the card being dragged, not to other cards
     const style = {
@@ -53,17 +61,10 @@ export const DraggableCard = ({
         >
             <MarketDriverCard
                 driver={driver}
-                internalUserId={marketContext.internalUserId}
-                reserveDriverId={marketContext.userTeam!.reserve_driver_id}
-                userBudget={marketContext.userBudget}
-                userDriverCount={marketContext.userDriverCount}
-                handleBuyFromMarket={marketContext.handleBuyFromMarket}
-                handleBuyFromUser={marketContext.handleBuyFromUser}
-                handleSell={marketContext.handleSell}
-                handleList={marketContext.handleList}
-                handleUnlist={marketContext.handleUnlist}
-                handleBuyout={marketContext.handleBuyout}
-                setExpandedDriver={marketContext.setExpandedDriver}
+                reserveDriverId={reserveDriverId}
+                userState={userState}
+                handlers={handlers}
+                setExpandedDriver={setExpandedDriver}
             />
         </div>
     </div>

@@ -1,26 +1,22 @@
 import { motion } from 'framer-motion';
+
 import { OwnershipBadge } from './OwnershipBadge';
 import { LockCountdown } from './LockCountdown';
 import { PriceDisplay } from './PriceDisplay';
+
 import { useDriverActionButton } from '@/features/Market/hooks';
 import { getDriverLastName } from '@/features/Market/utils';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
-import type { SetStateFunction } from '@/core/contexts/MarketContext';
+import type { SetStateFunction, UserState } from '@/core/contexts/MarketContext';
 import { useDriverCardLogic } from '@/features/Market/hooks/useDriverCardLogic';
+import type { UseMarketHandlersReturn } from '@/features/Market/hooks/useMarketHandlers/useMarketHandlers';
 
 export interface MarketDriverCardProps {
   driver: DriverWithOwnership;
   loading?: boolean;
   reserveDriverId: number | null;
-  internalUserId: number;
-  userBudget: number;
-  userDriverCount: number;
-  handleBuyFromMarket: (driverId: number) => void;
-  handleBuyFromUser: (driverId: number) => void;
-  handleSell: (driverId: number) => void;
-  handleList: (driverId: number) => void;
-  handleUnlist: (driverId: number) => void;
-  handleBuyout: (driverId: number) => void;
+  userState: UserState;
+  handlers: UseMarketHandlersReturn;
   setExpandedDriver: SetStateFunction<DriverWithOwnership | null>;
 }
 
@@ -28,15 +24,8 @@ export const MarketDriverCard = ({
   driver,
   loading = false,
   reserveDriverId,
-  internalUserId,
-  userBudget,
-  userDriverCount,
-  handleBuyFromMarket,
-  handleBuyFromUser,
-  handleSell,
-  handleList,
-  handleUnlist,
-  handleBuyout,
+  userState,
+  handlers,
   setExpandedDriver,
 }: MarketDriverCardProps) => {
 
@@ -52,10 +41,8 @@ export const MarketDriverCard = ({
     setShowSellMenu,
   } = useDriverCardLogic({
     driver,
-    internalUserId,
+    ...userState,
     reserveDriverId,
-    userBudget,
-    userDriverCount,
   })
 
   const { renderActionButton } = useDriverActionButton({
@@ -65,12 +52,7 @@ export const MarketDriverCard = ({
     driverId: driver.id,
     showSellMenu,
     setShowSellMenu,
-    handleBuyFromMarket,
-    handleBuyFromUser,
-    handleSell,
-    handleList,
-    handleUnlist,
-    handleBuyout,
+    ...handlers,
   })
 
   return (
@@ -104,7 +86,7 @@ export const MarketDriverCard = ({
           <div className="mt-1 flex flex-wrap gap-1">
             <OwnershipBadge
               ownership={ownership}
-              currentUserId={internalUserId}
+              currentUserId={userState.internalUserId}
               isReserve={isReserve}
               compact
             />

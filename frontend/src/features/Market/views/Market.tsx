@@ -60,17 +60,17 @@ const Market = () => {
                 <MarketHeader
                     leagueId={marketContext.leagueId} 
                     league={marketContext.league}
-                    userBudget={marketContext.userBudget}
-                    userDriverCount={marketContext.userDriverCount}
+                    userBudget={marketContext.userState.userBudget}
+                    userDriverCount={marketContext.userState.userDriverCount}
                     navigate={navigate}
                 />
 
                 {/* Tabs & Search */}
                 <MarketTabs
-                    activeTab={marketContext.activeTab}
-                    setActiveTab={marketContext.setActiveTab}
-                    searchQuery={marketContext.searchQuery}
-                    setSearchQuery={marketContext.setSearchQuery}
+                    activeTab={marketContext.state.activeTab}
+                    setActiveTab={marketContext.state.setActiveTab}
+                    searchQuery={marketContext.state.searchQuery}
+                    setSearchQuery={marketContext.state.setSearchQuery}
                     freeDrivers={marketContext.freeDrivers}
                     forSaleDrivers={marketContext.forSaleDrivers}
                     myDrivers={marketContext.myDrivers}
@@ -81,18 +81,18 @@ const Market = () => {
             </div>
 
             {/* Expanded Driver Modal */}
-            {marketContext.expandedDriver && (
+            {marketContext.state.expandedDriver && (
                 <AnimatePresence>
                     <DriverCardExpanded
-                        key={marketContext.expandedDriver.id}
-                        d={marketContext.expandedDriver as any}
-                        setExpanded={() => marketContext.setExpandedDriver(null)}
+                        key={marketContext.state.expandedDriver.id}
+                        d={marketContext.state.expandedDriver as any}
+                        setExpanded={() => marketContext.state.setExpandedDriver(null)}
                     />
                 </AnimatePresence>
             )}
 
             {/* Buy Driver Modal */}
-            {marketContext.buyModalDriver && (
+            {marketContext.state.buyModalDriver && (
                 <AnimatePresence>
                     <DriverSaleModal
                         mode="buyDriver"
@@ -101,7 +101,7 @@ const Market = () => {
             )}
 
             {/* Sell Driver Modal */}
-            {marketContext.sellModalDriver && (
+            {marketContext.state.sellModalDriver && (
                 <AnimatePresence>
                     <DriverSaleModal
                         mode="quickSell"
@@ -111,7 +111,7 @@ const Market = () => {
             
 
             {/* List for Sale Modal */}
-            {marketContext.listModalDriver && (
+            {marketContext.state.listModalDriver && (
                 <AnimatePresence>
                     <DriverSaleModal
                         mode="listForSale"
@@ -121,13 +121,13 @@ const Market = () => {
 
             {/* Confirm/Success/Error Dialog */}
             <ConfirmDialog
-                isOpen={marketContext.dialog.isOpen}
-                onClose={() => marketContext.setDialog({ ...marketContext.dialog, isOpen: false })}
-                onConfirm={marketContext.dialog.onConfirm}
-                title={marketContext.dialog.title}
-                message={marketContext.dialog.message}
-                type={marketContext.dialog.type}
-                confirmText={marketContext.dialog.confirmText}
+                isOpen={marketContext.state.dialog.isOpen}
+                onClose={() => marketContext.state.setDialog({ ...marketContext.state.dialog, isOpen: false })}
+                onConfirm={marketContext.state.dialog.onConfirm}
+                title={marketContext.state.dialog.title}
+                message={marketContext.state.dialog.message}
+                type={marketContext.state.dialog.type}
+                confirmText={marketContext.state.dialog.confirmText}
             />
         </div>
     );

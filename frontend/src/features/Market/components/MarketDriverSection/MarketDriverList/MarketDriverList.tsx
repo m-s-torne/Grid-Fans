@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MarketDriverCard } from './MarketDriverCard';
 import { DraggableCard } from './DraggableCard';
 import { DraggableReserveSlot } from './DraggableReserveSlot';
-import type { MarketContext } from '@/core/contexts/MarketContext';
+import type { MarketContext, UserState } from '@/core/contexts/MarketContext';
+import type { ActiveTab } from '@/features/Market/hooks/useMarketState';
 
 export interface MarketDriverListProps {
   gridColumns?: 2 | 3 | 4;
@@ -16,17 +17,34 @@ export const MarketDriverList = ({
   marketContext,
 }: MarketDriverListProps) => {
 
-  const loading = marketContext.activeTab === 'free' ? marketContext.freeDriversLoading : 
-                        marketContext.activeTab === 'for-sale' ? marketContext.forSaleLoading : 
+  const userState = {
+    ...marketContext.userState,
+  };
+
+  const reserveId = marketContext.userTeam?.reserve_driver_id ?? null;
+
+  const state = {
+    ...marketContext.state
+  }
+
+  const handlers = {
+    ...marketContext.handlers
+  }
+
+  const loading = state.activeTab === 'free' ? marketContext.freeDriversLoading : 
+                        state.activeTab === 'for-sale' ? marketContext.forSaleLoading : 
                         marketContext.myDriversLoading
 
-  const getEmptyMessage = () => {
-      if (marketContext.searchQuery) return "No drivers match your search";
+  const getEmptyMessage = (searchQuery: string, activeTab: ActiveTab): string => {
+      if (searchQuery) return "No drivers match your search";
       
-      if (marketContext.activeTab === 'my-drivers') return "You don't own any drivers yet";
-      if (marketContext.activeTab === 'free') return "No free agents available";
+      if (activeTab === 'my-drivers') return "You don't own any drivers yet";
+      if (activeTab === 'free') return "No free agents available";
       return "No drivers for sale available";
   };
+
+  const emptyMessage = getEmptyMessage(state.searchQuery, state.activeTab?? 'free');
+
   // Loading skeletons
   if (loading) {
     return (
@@ -60,7 +78,7 @@ export const MarketDriverList = ({
   }
 
   // Empty state
-  if (marketContext.filteredDrivers.length === 0) {
+  if (marketContext.state.filteredDrivers.length === 0) {
     return (
       <div className="text-center py-8 sm:py-12">
         <svg
@@ -77,7 +95,7 @@ export const MarketDriverList = ({
           />
         </svg>
         <h3 className="text-gray-400 text-lg sm:text-xl font-semibold mb-2">No Drivers Found</h3>
-        <p className="text-gray-500 text-sm sm:text-base">{getEmptyMessage()}</p>
+        <p className="text-gray-500 text-sm sm:text-base">{emptyMessage}</p>
       </div>
     );
   }
@@ -85,8 +103,8 @@ export const MarketDriverList = ({
   // Driver grid
   // Special layout when drag & drop is enabled (My Drivers tab)
   if (enableDragDrop) {
-    const mainDrivers = marketContext.filteredDrivers.filter(d => d.id !== marketContext.userTeam!.reserve_driver_id);
-    const reserveDriver = marketContext.filteredDrivers.find(d => d.id === marketContext.userTeam!.reserve_driver_id);
+    const mainDrivers = marketContext.state.filteredDrivers.filter(d => d.id !== marketContext.userTeam!.reserve_driver_id);
+    const reserveDriver = marketContext.state.filteredDrivers.find(d => d.id === marketContext.userTeam!.reserve_driver_id);
 
     return (
       <div>
@@ -111,7 +129,11 @@ export const MarketDriverList = ({
                 >
                   <DraggableCard 
                     driver={driver}
-                    marketContext={marketContext}
+                    handlers={marketContext.handlers}
+                    reserveDriverId={reserveId}
+                    swappingDriverIds={marketContext.swappingDriverIds}
+                    userState={userState}
+                    setExpandedDriver={state.setExpandedDriver}
                   />
                 </motion.div>
               ))}
@@ -122,7 +144,11 @@ export const MarketDriverList = ({
         {/* Reserve Driver Section */}
         <DraggableReserveSlot 
           driver={reserveDriver!}
-          marketContext={marketContext}
+          reserveDriverId={reserveId}
+          userState={userState}
+          handlers={handlers}
+          setExpandedDriver={state.setExpandedDriver}
+          swappingDriverIds={marketContext.swappingDriverIds}
           loading={loading}
         />
       </div>
@@ -137,7 +163,7 @@ export const MarketDriverList = ({
       'grid-cols-1 sm:grid-cols-2'
     }`}>
       <AnimatePresence mode="popLayout">
-        {marketContext.filteredDrivers.map((driver) => (
+        {marketContext.state.filteredDrivers.map((driver) => (
           <motion.div
             key={driver.id}
             initial={{ opacity: 0, scale: 0.9 }}
@@ -148,17 +174,10 @@ export const MarketDriverList = ({
             <MarketDriverCard 
               driver={driver}
               loading={loading}
-              userBudget={marketContext.userBudget}
-              userDriverCount={marketContext.userDriverCount}
-              handleBuyFromMarket={marketContext.handleBuyFromMarket}
-              handleBuyFromUser={marketContext.handleBuyFromUser}
-              handleSell={marketContext.handleSell}
-              handleList={marketContext.handleList}
-              handleUnlist={marketContext.handleUnlist}
-              handleBuyout={marketContext.handleBuyout}
-              setExpandedDriver={marketContext.setExpandedDriver}
-              reserveDriverId={marketContext.userTeam!.reserve_driver_id}
-              internalUserId={marketContext.internalUserId}
+              reserveDriverId={reserveId}
+              userState={userState}
+              handlers={handlers}
+              setExpandedDriver={state.setExpandedDriver}
             />
           </motion.div>
         ))}
