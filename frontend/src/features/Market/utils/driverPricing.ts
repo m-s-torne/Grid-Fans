@@ -3,6 +3,7 @@
  * No React dependencies - can be used anywhere and easily tested
  */
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+import type { PriceType } from '../components/MarketDriverSection/MarketDriverList/PriceDisplay';
 
 export interface DriverPricing {
   basePrice: number;
@@ -61,4 +62,29 @@ export function calculateDriverPricing(
     isLocked,
     isForSale,
   };
+}
+
+export const getPriceInfo = (pricing: DriverPricing): { priceType: PriceType, price: number } => {
+  const { basePrice, displayPrice, buyoutPrice, isFreeAgent, isOwnedByOther, isLocked, isForSale } = pricing;
+
+  const finalPrice = isFreeAgent 
+    ? basePrice 
+    : isForSale 
+    ? displayPrice 
+    : isOwnedByOther && !isLocked 
+    ? buyoutPrice 
+    : displayPrice;
+
+  const type = isFreeAgent 
+    ? 'base' 
+    : isForSale 
+    ? 'sale' 
+    : isOwnedByOther && !isLocked 
+    ? 'buyout' 
+    : 'base';
+
+  return {
+    priceType: type,
+    price: finalPrice
+  }
 }

@@ -2,6 +2,7 @@
  * Pure utility functions for determining driver card actions
  * No React dependencies - pure business logic
  */
+import type { DriverWithOwnership } from '../types/marketTypes';
 import type { DriverPricing } from './driverPricing';
 
 export type ActionButtonType = 
@@ -90,4 +91,16 @@ export function determineDriverAction(
     canExecuteAction,
     priceToCheck,
   };
+}
+
+export const getDriverValues = (driver: DriverWithOwnership, pricing: DriverPricing, reserveDriverId: number | null) => {
+  const { isOwnedByMe, isLocked } = pricing;
+  const ownership = driver.ownership;
+  const isReserve = isOwnedByMe && reserveDriverId === driver.id;
+
+  return {
+    ownership,
+    isReserve,
+    isLocked
+  }
 }

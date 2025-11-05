@@ -2,11 +2,11 @@ import { motion } from 'framer-motion';
 import { OwnershipBadge } from './OwnershipBadge';
 import { LockCountdown } from './LockCountdown';
 import { PriceDisplay } from './PriceDisplay';
-import { useState } from 'react';
 import { useDriverActionButton } from '@/features/Market/hooks';
-import { calculateDriverPricing, determineDriverAction, getDriverLastName } from '@/features/Market/utils';
+import { getDriverLastName } from '@/features/Market/utils';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 import type { SetStateFunction } from '@/core/contexts/MarketContext';
+import { useDriverCardLogic } from '@/features/Market/hooks/useDriverCardLogic';
 
 export interface MarketDriverCardProps {
   driver: DriverWithOwnership;
@@ -40,20 +40,24 @@ export const MarketDriverCard = ({
   setExpandedDriver,
 }: MarketDriverCardProps) => {
 
-  const [showSellMenu, setShowSellMenu] = useState(false);
+  const {
+    pricing,
+    actions,
+    ownership,
+    isReserve,
+    isLocked,
+    priceType,
+    price,
+    showSellMenu,
+    setShowSellMenu,
+  } = useDriverCardLogic({
+    driver,
+    internalUserId,
+    reserveDriverId,
+    userBudget,
+    userDriverCount,
+  })
 
-  // Pure function: Calculate pricing and ownership data
-  const pricing = calculateDriverPricing(driver, internalUserId);
-  
-  // Pure function: Determine action button type and state
-  const actions = determineDriverAction(pricing, userBudget, userDriverCount);
-  
-  // Extract commonly used values
-  const { basePrice, displayPrice, buyoutPrice, isFreeAgent, isOwnedByMe, isOwnedByOther, isLocked, isForSale } = pricing;
-  const ownership = driver.ownership;
-  const isReserve = isOwnedByMe && reserveDriverId === driver.id;
-
-  // Hook: Render action button (JSX)
   const { renderActionButton } = useDriverActionButton({
     pricing,
     actions,
@@ -67,7 +71,7 @@ export const MarketDriverCard = ({
     handleList,
     handleUnlist,
     handleBuyout,
-  });
+  })
 
   return (
     <motion.div
@@ -135,18 +139,8 @@ export const MarketDriverCard = ({
           <p className="text-white font-bold text-xs sm:text-sm">{driver.fantasy_stats?.avg_finish?.toLocaleString(undefined, { maximumFractionDigits: 1, useGrouping: false }) || 'N/A'}</p>
         </div>
         <PriceDisplay
-          price={
-            isFreeAgent ? basePrice :
-            isForSale ? displayPrice :
-            isOwnedByOther && !isLocked ? buyoutPrice :
-            displayPrice
-          }
-          type={
-            isFreeAgent ? 'base' :
-            isForSale ? 'sale' :
-            isOwnedByOther && !isLocked ? 'buyout' :
-            'base'
-          }
+          price={price}
+          type={priceType}
           showIcon={false}
         />
       </div>

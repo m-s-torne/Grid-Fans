@@ -1,8 +1,10 @@
 import { formatCurrency } from '@/features/Market/utils';
 
+export type PriceType = 'base' | 'buyout' | 'sale' | 'refund';
+
 interface PriceDisplayProps {
   price: number;
-  type?: 'base' | 'buyout' | 'sale' | 'refund';
+  type?: PriceType;
   showIcon?: boolean;
   compact?: boolean;
 }

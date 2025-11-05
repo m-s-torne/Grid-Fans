@@ -19,7 +19,7 @@ import type { UserTeam } from '@/core/services/userTeamService';
 import type { UseMutateFunction } from '@tanstack/react-query';
 import { useMarketOpsOrchestrator, type BuyFromMarketMutation, type BuyFromUserMutation, type ListForSaleMutation, type SellToMarketMutation, type UnlistDriverMutation } from '@/features/Market/hooks/useMarketOps';
 import type { SensorDescriptor, SensorOptions } from '@dnd-kit/core/dist/sensors/types';
-import type { UseMarketHandlersParams, UseMarketHandlersReturn } from '@/features/Market/hooks/useMarketHandlers/useMarketHandlers';
+import type { UseMarketHandlersReturn } from '@/features/Market/hooks/useMarketHandlers/useMarketHandlers';
 import type { DragEndEvent } from '@dnd-kit/core';
 
 export type SetStateFunction<T> = Dispatch<SetStateAction<T>>
@@ -86,8 +86,8 @@ interface MarketComputedData {
     filteredDrivers: DriverWithOwnership[];
 }
 
-export interface MarketContext extends MarketStates, MarketDataFetch, MarketMutations, DragAndDropVariables, MarketComputedData, UseMarketHandlersReturn {
-    useMarketHandlers: (params: UseMarketHandlersParams) => UseMarketHandlersReturn;
+export interface MarketContext extends MarketStates, MarketDataFetch, MarketMutations, DragAndDropVariables, MarketComputedData {
+    handlers:  UseMarketHandlersReturn;
 }
 
 const MarketContext = createContext<MarketContext | null>(null)
@@ -182,6 +182,21 @@ export const MarketProvider = ({ children }: MarketProviderProps) => {
         activeTab,
         searchQuery,
     });
+
+    /*const { renderActionButton } = useDriverActionButton({
+        pricing,
+        actions,
+        loading,
+        driverId: driver.id,
+        showSellMenu,
+        setShowSellMenu,
+        handleBuyFromMarket,
+        handleBuyFromUser,
+        handleSell,
+        handleList,
+        handleUnlist,
+        handleBuyout,
+    });*/
     
     const value: MarketContext = {
         leagueId,
@@ -192,7 +207,7 @@ export const MarketProvider = ({ children }: MarketProviderProps) => {
         sellModalDriver, setSellModalDriver,
         listModalDriver, setListModalDriver,
         dialog, setDialog,
-        ...marketHandlers,
+        handlers: {...marketHandlers},
         league, leagueLoading, leagueError,
         freeDrivers, freeDriversLoading,
         forSaleDrivers, forSaleLoading,
@@ -207,7 +222,7 @@ export const MarketProvider = ({ children }: MarketProviderProps) => {
         listForSale, isListing,
         unlistFromSale,
         sensors, swappingDriverIds, handleDragEnd,
-        useMarketHandlers, filteredDrivers
+        filteredDrivers
     }
 
     return (

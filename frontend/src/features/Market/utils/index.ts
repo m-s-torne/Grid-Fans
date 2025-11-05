@@ -1,10 +1,10 @@
-export { calculateDriverPricing } from './driverPricing'
-export { determineDriverAction } from './driverActions'
+export { calculateDriverPricing, getPriceInfo } from './driverPricing'
+export { determineDriverAction, getDriverValues } from './driverActions'
 export { 
     formatCurrency, 
     formatCurrencyPrecise, 
     formatCurrencyNumber,
-    parseCurrencyInput 
+    parseCurrencyInput
 } from './currencyFormat'
 export { calculateModalValues, calculateProfit } from './modalCalculations'
 export { calculateDriverSaleValues, calculateProfit as calculateSaleProfit } from './driverSaleCalculations'
