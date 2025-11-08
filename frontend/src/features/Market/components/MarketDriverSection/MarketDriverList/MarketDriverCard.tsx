@@ -1,9 +1,7 @@
 import { motion } from 'framer-motion';
-
 import { OwnershipBadge } from './OwnershipBadge';
 import { LockCountdown } from './LockCountdown';
 import { PriceDisplay } from './PriceDisplay';
-
 import { useDriverActionButton } from '@/features/Market/hooks';
 import { getDriverLastName } from '@/features/Market/utils';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
@@ -52,7 +50,7 @@ export const MarketDriverCard = ({
     driverId: driver.id,
     showSellMenu,
     setShowSellMenu,
-    ...handlers,
+    handlers,
   })
 
   return (

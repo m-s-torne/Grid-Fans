@@ -1,7 +1,7 @@
 import { QuickSellContent, type QuickSellContentProps } from "./QuickSellContent"
 import { BuyDriverContent, type BuyDriverContentProps } from "./BuyDriverContent"
 import { ListForSaleContent, type ListForSaleContentProps } from "./ListForSaleContent"
-import type { ModalMode } from "@/features/Market/components/modals/DriverSaleModal/modalConfig"
+import type { ModalMode } from "@/features/Market/config/modalConfig"
 import type { DriverWithOwnership } from "@/features/Market/types/marketTypes";
 import type { ComponentType } from "react";
 

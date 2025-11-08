@@ -8,7 +8,7 @@ from f1_api.models.f1_schemas import *
 from f1_api.models.app_models import *
 
 # Load environment variables first
-load_dotenv(r'C:/Users/Marc/Documents/ITA/Sprint 8/f1_api/.env')
+load_dotenv(r'C:/Users/Marc/Documents/ITA/Grid Fans/f1_api/.env')
 
 # Fetch variables
 USER = os.getenv("user")

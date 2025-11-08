@@ -1,13 +1,10 @@
-import { useMarketContext } from '@/core/contexts/MarketContext';
-import { useDriverSaleModal } from '@/features/Market/hooks';
-import type { ModalMode } from './modalConfig';
+import type { ModalMode } from '@/features/Market/config/modalConfig';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
-import type { JSX } from 'react';
 
 interface DriverSaleModalHeaderProps {
   mode: ModalMode;
   driver: DriverWithOwnership;
-  icon: string | JSX.Element;
+  icon: string | React.ReactNode;
   iconBgColor: string;
   iconBorderColor: string;
   title: string;

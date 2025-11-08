@@ -28,20 +28,20 @@ interface ModalModeConfig {
  */
 export const MODAL_MODE_CONFIG: Record<ModalMode, ModalModeConfig> = {
   buyDriver: {
-    getDriver: (ctx) => ctx.buyModalDriver,
-    setDriver: (ctx) => ctx.setBuyModalDriver,
+    getDriver: (ctx) => ctx.state.buyModalDriver,
+    setDriver: (ctx) => ctx.state.setBuyModalDriver,
     getLoading: (ctx) => ctx.isBuyingFromMarket,
   },
   
   quickSell: {
-    getDriver: (ctx) => ctx.sellModalDriver,
-    setDriver: (ctx) => ctx.setSellModalDriver,
+    getDriver: (ctx) => ctx.state.sellModalDriver,
+    setDriver: (ctx) => ctx.state.setSellModalDriver,
     getLoading: (ctx) => ctx.isSellingToMarket,
   },
   
   listForSale: {
-    getDriver: (ctx) => ctx.listModalDriver,
-    setDriver: (ctx) => ctx.setListModalDriver,
+    getDriver: (ctx) => ctx.state.listModalDriver,
+    setDriver: (ctx) => ctx.state.setListModalDriver,
     getLoading: (ctx) => ctx.isListing,
   },
 } as const;

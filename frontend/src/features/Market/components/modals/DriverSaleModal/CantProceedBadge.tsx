@@ -1,4 +1,4 @@
-import type { ModalMode } from "./modalConfig";
+import type { ModalMode } from "../../../config/modalConfig";
 
 interface CantProceedBadgeProps {
   mode: ModalMode;

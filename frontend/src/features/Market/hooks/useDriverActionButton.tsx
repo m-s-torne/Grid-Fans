@@ -5,6 +5,7 @@
 import type { DriverPricing } from '@/features/Market/utils/driverPricing';
 import type { DriverCardActions } from '@/features/Market/utils/driverActions';
 import { formatCurrencyPrecise } from '@/features/Market/utils/currencyFormat';
+import type { UseMarketHandlersReturn } from './useMarketHandlers/useMarketHandlers';
 
 interface UseDriverActionButtonParams {
   pricing: DriverPricing;
@@ -13,12 +14,7 @@ interface UseDriverActionButtonParams {
   driverId: number;
   showSellMenu: boolean;
   setShowSellMenu: (show: boolean) => void;
-  handleBuyFromMarket?: (driverId: number) => void;
-  handleBuyFromUser?: (driverId: number) => void;
-  handleSell?: (driverId: number) => void;
-  handleList?: (driverId: number) => void;
-  handleUnlist?: (driverId: number) => void;
-  handleBuyout?: (driverId: number) => void;
+  handlers: UseMarketHandlersReturn;
 }
 
 export const useDriverActionButton = ({
@@ -28,15 +24,16 @@ export const useDriverActionButton = ({
   driverId,
   showSellMenu,
   setShowSellMenu,
-  handleBuyFromMarket,
-  handleBuyFromUser,
-  handleSell,
-  handleList,
-  handleUnlist,
-  handleBuyout,
+  handlers,
 }: UseDriverActionButtonParams) => {
   const { refundPrice } = pricing;
   const { actionType, canExecuteAction, canAfford, canAffordBuyout, hasSpace } = actions;
+
+  if (actionType === 'buy-free-agent') {
+    console.log(
+      !!canExecuteAction
+    )
+  }
 
   const renderActionButton = () => {
     switch (actionType) {
@@ -45,7 +42,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (canExecuteAction) handleBuyFromMarket?.(driverId);
+              if (canExecuteAction) handlers.handleBuyFromMarket(driverId);
             }}
             disabled={!canExecuteAction || loading}
             className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all ${
@@ -70,7 +67,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleUnlist?.(driverId);
+              handlers.handleUnlist(driverId);
             }}
             disabled={loading}
             className="w-full px-3 py-2 rounded-lg font-medium text-sm bg-gray-600 hover:bg-gray-700 text-white transition-all"
@@ -102,7 +99,7 @@ export const useDriverActionButton = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowSellMenu(false);
-                    handleSell?.(driverId);
+                    handlers.handleSell(driverId);
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-white hover:bg-red-600/50 transition-colors flex items-center gap-2"
                 >
@@ -116,7 +113,7 @@ export const useDriverActionButton = ({
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowSellMenu(false);
-                    handleList?.(driverId);
+                    handlers.handleList(driverId);
                   }}
                   className="w-full px-3 py-2 text-left text-sm text-white hover:bg-yellow-600/50 transition-colors flex items-center gap-2 border-t border-gray-700"
                 >
@@ -136,7 +133,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (canExecuteAction) handleBuyFromUser?.(driverId);
+              if (canExecuteAction) handlers.handleBuyFromUser(driverId);
             }}
             disabled={!canExecuteAction || loading}
             className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all ${
@@ -154,7 +151,7 @@ export const useDriverActionButton = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (canExecuteAction) handleBuyout?.(driverId);
+              if (canExecuteAction) handlers.handleBuyout(driverId);
             }}
             disabled={!canExecuteAction || loading}
             className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-1 ${

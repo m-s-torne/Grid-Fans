@@ -6,7 +6,7 @@ import { CantProceedBadge } from './CantProceedBadge';
 import { DriverSaleModalActions } from './DriverSaleModalActions';
 import { useMarketContext } from '@/core/contexts/MarketContext';
 import { TransactionDetails } from './TransactionDetails';
-import { MODAL_MODE_CONFIG, type ModalMode } from './modalConfig';
+import { MODAL_MODE_CONFIG, type ModalMode } from '@/features/Market/config/modalConfig';
 
 interface DriverSaleModalProps {
   mode: ModalMode;
@@ -95,7 +95,7 @@ export const DriverSaleModal = ({
                 handlePriceChange={handlePriceChange}
                 handlePresetClick={handlePresetClick}
                 isListing={marketContext.isListing}
-                userBudget={marketContext.userBudget}
+                userBudget={marketContext.userState.userBudget}
                 price={price}
                 budgetAfter={budgetAfter}
                 refundAmount={refundAmount}

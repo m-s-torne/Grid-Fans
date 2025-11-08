@@ -10,10 +10,14 @@ const titleMap = {
 }
 
 const MarketDriverSection = () => {
-    const marketContext = useMarketContext()
+    const {
+        state,
+        sensors,
+        handleDragEnd,
+    } = useMarketContext()
 
     // Compute title based on active tab
-    const title = titleMap[marketContext.state.activeTab?? 'free'];
+    const title = titleMap[state.activeTab?? 'free'];
 
     return (
         <div className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6">
@@ -23,30 +27,27 @@ const MarketDriverSection = () => {
                     {title}
                 </h2>
                 <p className="text-gray-400 text-xs sm:text-sm lg:text-base">
-                    {marketContext.state.filteredDrivers.length} {marketContext.state.filteredDrivers.length === 1 ? 'driver' : 'drivers'}
+                    {state.filteredDrivers.length} {state.filteredDrivers.length === 1 ? 'driver' : 'drivers'}
                 </p>
             </div>
 
             {/* Driver List - with or without DnD */}
-            {marketContext.state.activeTab === 'my-drivers' ? (
+            {state.activeTab === 'my-drivers' ? (
                 <DndContext
-                    sensors={marketContext.sensors}
+                    sensors={sensors}
                     collisionDetection={closestCenter}
-                    onDragEnd={marketContext.handleDragEnd}
+                    onDragEnd={handleDragEnd}
                 >
                     <SortableContext
-                        items={marketContext.state.filteredDrivers.map(d => `driver-${d.id}`)}
+                        items={state.filteredDrivers.map(d => `driver-${d.id}`)}
                     >
                         <MarketDriverList
                             enableDragDrop={true}
-                            marketContext={marketContext}
                         />
                     </SortableContext>
                 </DndContext>
             ) : (
-                <MarketDriverList 
-                    marketContext={marketContext}
-                />
+                <MarketDriverList />
             )}
         </div>
     );
