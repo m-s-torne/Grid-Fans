@@ -26,6 +26,8 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
 
 ## 🚧 Estado Actual de Implementación
 
+❗El proyecto está por desplegar.
+
 ### ✅ **Funcionalidades Implementadas**
 - **🏆 Gestión de Ligas**
   - ✅ Creación de ligas privadas con códigos únicos
