@@ -361,28 +361,26 @@ yarn install
 
 ```env
 # Supabase Configuration
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your_supabase_anon_key
 
-# Database (Supabase PostgreSQL)
-DATABASE_URL=postgresql://username:password@hostname:port/database_name
+# Database Connection (Supabase Pooler)
+user=postgres.your_project_ref
+password=your_database_password
+host=aws-0-region.pooler.supabase.com
+port=5432
+dbname=postgres
+pool_mode=session
 
 # FastF1 Cache
-FASTF1_CACHE_DIR=./ff1_cache
+FF1_CACHE_DIR=./ff1_cache
 
-# API Configuration
-API_HOST=localhost
-API_PORT=8000
-DEBUG=true
+# CORS Origins (comma-separated)
+CORS_ORIGINS=http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174
 
-# CORS
-CORS_ORIGINS=["http://localhost:3000", "http://localhost:5173"]
-
-# JWT Configuration
-JWT_SECRET_KEY=your_jwt_secret_key
-JWT_ALGORITHM=HS256
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+# Other Configuration
+FF1_BASE=http://localhost:8000
+HEADSHOT_URL_BASE=https://media.formula1.com/image/upload/c_lfill,w_600/q_auto
 ```
 
 2. **Configurar Supabase:**
@@ -423,7 +421,7 @@ python -c "from config.sql_init import init_database; init_database()"
 
 ```env
 # API Configuration
-VITE_API_BASE_URL=http://localhost:8000
+VITE_API_URL=http://localhost:8000
 VITE_API_VERSION=v1
 
 # Supabase Configuration
