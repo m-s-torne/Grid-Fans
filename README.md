@@ -37,7 +37,7 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
   - ✅ Visualización de elementos identificativos de cada piloto con actualización automática (equipo al que pertenecen actualmente a prueba de cambio de equipos intratemporada, logo del equipo y fotografía de cada piloto acorde a estos datos).
   - 🔄 Visualización de estadísticas básicas de pilotos (pendiente de refinamiento)
   - 🔄 Sistema de precios dinámicos (base implementada, pendiente de refinamiento)
-  - 🔄 Compra/venta de pilotos (en desarrollo)
+  - 🔄 Compra/venta de pilotos (mayormente implementada, falta la funcionalidad "buyout" y refinar las ya implementadas)
 
 - **📊 Datos reales de F1**
   - ✅ Integración con FastF1 para datos oficiales
@@ -209,7 +209,7 @@ Sprint 8/
 | Componente | Estado Actual | Estado Objetivo | Progreso |
 |------------|---------------|-----------------|----------|
 | **Arquitectura** | ✅ MVC por capas tradicional | 🎯 DDD con Bounded Contexts | Planificado |
-| **Testing** | ❌ Configuración básica, pocos tests | 🎯 TDD con cobertura completa | Pendiente |
+| **Testing** | ❌ Configuración básica, pocos tests | 🎯 TDD con cobertura +50% | Pendiente |
 | **Controladores** | ✅ MVC tradicional (funcional) | 🎯 Use Cases + API Layer | Pendiente |
 | **Modelos** | ✅ SQLAlchemy directo (funcional) | 🎯 Entities + Value Objects | Pendiente |
 | **Base de datos** | ✅ PostgreSQL con Supabase | ✅ PostgreSQL (Supabase) | Completado |
@@ -221,15 +221,16 @@ Sprint 8/
 
 #### **Fase 0: Estabilización Actual (Prioridad)**
 - ✅ Mantener funcionalidad MVC existente
-- 🔄 Completar funcionalidades de mercado y puntuación
+- ✅ Documentar arquitectura actual
+- 🔄 Completar funcionalidades de mercado y puntuación (actualmente +50% implementado)
 - 🔄 Añadir tests básicos a funcionalidad existente
-- 🔄 Documentar arquitectura actual
 
 #### **Fase 1: Foundation (Futuro - Experimental)**
 - 🎯 Investigar estructura DDD para F1 Fantasy
 - 🎯 Crear PoC de Value Objects básicos (Money, UserId)
-- 🎯 Configurar testing framework con TDD
+- 🎯 Configurar testing framework (Pytest) con TDD
 - 🎯 Documentar decisiones arquitectónicas
+- 🎯 Puede valer la pena incorporar Next.js?
 
 #### **Fase 2: Market Context (Futuro)**
 - 🎯 Migrar lógica de mercado a DDD (si se decide continuar)
