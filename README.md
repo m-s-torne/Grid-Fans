@@ -68,6 +68,10 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
 - Poder ver resultados de temporadas anteriores, garantizar la continuidad entre temporadas
 - API pública para desarrolladores
 
+### Demo:
+
+https://github.com/user-attachments/assets/a7942f18-dbd2-4ad2-873e-15cb1f1ff795
+
 ## 🚀 Tech Stack
 
 ### Backend
