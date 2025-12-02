@@ -70,7 +70,7 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
 
 ### Demo:
 
-https://github.com/user-attachments/assets/a7942f18-dbd2-4ad2-873e-15cb1f1ff795
+![Grid fans demo](https://github.com/user-attachments/assets/735bb6fd-4b65-483a-9408-f390b07f1efc)
 
 ## 🚀 Tech Stack
 
