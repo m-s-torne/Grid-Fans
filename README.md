@@ -26,6 +26,8 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
 
 ## 🚧 Estado Actual de Implementación
 
+❗El proyecto está por desplegar.
+
 ### ✅ **Funcionalidades Implementadas**
 - **🏆 Gestión de Ligas**
   - ✅ Creación de ligas privadas con códigos únicos
@@ -37,7 +39,7 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
   - ✅ Visualización de elementos identificativos de cada piloto con actualización automática (equipo al que pertenecen actualmente a prueba de cambio de equipos intratemporada, logo del equipo y fotografía de cada piloto acorde a estos datos).
   - 🔄 Visualización de estadísticas básicas de pilotos (pendiente de refinamiento)
   - 🔄 Sistema de precios dinámicos (base implementada, pendiente de refinamiento)
-  - 🔄 Compra/venta de pilotos (en desarrollo)
+  - 🔄 Compra/venta de pilotos (mayormente implementada, falta la funcionalidad "buyout" y refinar las ya implementadas)
 
 - **📊 Datos reales de F1**
   - ✅ Integración con FastF1 para datos oficiales
@@ -65,6 +67,10 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
 - Análisis avanzados y estadísticas
 - Poder ver resultados de temporadas anteriores, garantizar la continuidad entre temporadas
 - API pública para desarrolladores
+
+### Demo:
+
+![Grid fans demo](https://github.com/user-attachments/assets/735bb6fd-4b65-483a-9408-f390b07f1efc)
 
 ## 🚀 Tech Stack
 
@@ -209,7 +215,7 @@ Sprint 8/
 | Componente | Estado Actual | Estado Objetivo | Progreso |
 |------------|---------------|-----------------|----------|
 | **Arquitectura** | ✅ MVC por capas tradicional | 🎯 DDD con Bounded Contexts | Planificado |
-| **Testing** | ❌ Configuración básica, pocos tests | 🎯 TDD con cobertura completa | Pendiente |
+| **Testing** | ❌ Configuración básica, pocos tests | 🎯 TDD con cobertura +50% | Pendiente |
 | **Controladores** | ✅ MVC tradicional (funcional) | 🎯 Use Cases + API Layer | Pendiente |
 | **Modelos** | ✅ SQLAlchemy directo (funcional) | 🎯 Entities + Value Objects | Pendiente |
 | **Base de datos** | ✅ PostgreSQL con Supabase | ✅ PostgreSQL (Supabase) | Completado |
@@ -221,15 +227,16 @@ Sprint 8/
 
 #### **Fase 0: Estabilización Actual (Prioridad)**
 - ✅ Mantener funcionalidad MVC existente
-- 🔄 Completar funcionalidades de mercado y puntuación
+- ✅ Documentar arquitectura actual
+- 🔄 Completar funcionalidades de mercado y puntuación (actualmente +50% implementado)
 - 🔄 Añadir tests básicos a funcionalidad existente
-- 🔄 Documentar arquitectura actual
 
 #### **Fase 1: Foundation (Futuro - Experimental)**
 - 🎯 Investigar estructura DDD para F1 Fantasy
 - 🎯 Crear PoC de Value Objects básicos (Money, UserId)
-- 🎯 Configurar testing framework con TDD
+- 🎯 Configurar testing framework (Pytest) con TDD
 - 🎯 Documentar decisiones arquitectónicas
+- 🎯 Puede valer la pena incorporar Next.js?
 
 #### **Fase 2: Market Context (Futuro)**
 - 🎯 Migrar lógica de mercado a DDD (si se decide continuar)
@@ -360,28 +367,26 @@ yarn install
 
 ```env
 # Supabase Configuration
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your_supabase_anon_key
 
-# Database (Supabase PostgreSQL)
-DATABASE_URL=postgresql://username:password@hostname:port/database_name
+# Database Connection (Supabase Pooler)
+user=postgres.your_project_ref
+password=your_database_password
+host=aws-0-region.pooler.supabase.com
+port=5432
+dbname=postgres
+pool_mode=session
 
 # FastF1 Cache
-FASTF1_CACHE_DIR=./ff1_cache
+FF1_CACHE_DIR=./ff1_cache
 
-# API Configuration
-API_HOST=localhost
-API_PORT=8000
-DEBUG=true
+# CORS Origins (comma-separated)
+CORS_ORIGINS=http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174
 
-# CORS
-CORS_ORIGINS=["http://localhost:3000", "http://localhost:5173"]
-
-# JWT Configuration
-JWT_SECRET_KEY=your_jwt_secret_key
-JWT_ALGORITHM=HS256
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+# Other Configuration
+FF1_BASE=http://localhost:8000
+HEADSHOT_URL_BASE=https://media.formula1.com/image/upload/c_lfill,w_600/q_auto
 ```
 
 2. **Configurar Supabase:**
@@ -422,7 +427,7 @@ python -c "from config.sql_init import init_database; init_database()"
 
 ```env
 # API Configuration
-VITE_API_BASE_URL=http://localhost:8000
+VITE_API_URL=http://localhost:8000
 VITE_API_VERSION=v1
 
 # Supabase Configuration
