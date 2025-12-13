@@ -103,7 +103,7 @@ Grid Fans es un juego de gestión deportiva donde los usuarios:
 ### 📁 **Estructura Actual (main branch - En Funcionamiento)**
 
 ```
-Sprint 8/
+Grid Fans/
 ├── f1_api/                     # Backend (FastAPI + Python)
 │   ├── __pycache__/           # Cache de Python
 │   ├── config/                # Configuración de base de datos
@@ -148,7 +148,7 @@ Sprint 8/
 > **⚠️ IMPORTANTE:** Esta es una **estructura planificada**, NO la estructura actual. Uno de los objetivos actuales del proyecto es la migración de la estructura actual a la siguiente:
 
 ```
-Sprint 8/
+Grid Fans/
 ├── f1_api/                     # Backend (FastAPI + DDD Experimental)
 │   ├── features/               # 🆕 Bounded Contexts (DDD) - PLANIFICADO
 │   │   ├── market/            # Contexto de mercado de pilotos
@@ -315,8 +315,8 @@ Sprint 8/
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/mstne03/Sprint-8.git
-cd Sprint-8
+git clone https://github.com/m-s-torne/Grid-Fans.git
+cd Grid Fans
 ```
 
 ### 2. Setup del Backend
@@ -636,7 +636,7 @@ La aplicación del backend __está migrando__ hacia los principios de DDD:
 ## 📄 Sobre el Proyecto
 
 ### 🎓 **Contexto Académico**
-Este proyecto se desarrolla como parte de **Sprint 8** en el contexto de formación técnica. Es un proyecto educativo que implementa conceptos avanzados de desarrollo full-stack y arquitectura de software.
+Este proyecto se desarrolla como parte de **Sprint 8** y **Sprint 9** en el contexto de formación técnica. Es un proyecto educativo que implementa conceptos avanzados de desarrollo full-stack y arquitectura de software.
 
 ### 🔧 **Estado de Desarrollo**
 - **Fase:** Desarrollo activo (MVP en construcción)
