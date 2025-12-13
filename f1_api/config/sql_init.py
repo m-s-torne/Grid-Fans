@@ -7,8 +7,10 @@ from urllib.parse import quote_plus
 from f1_api.models.f1_schemas import *
 from f1_api.models.app_models import *
 
-# Load environment variables first
-load_dotenv(r'C:/Users/Marc/Documents/ITA/Grid Fans/f1_api/.env')
+# Load environment variables from .env in f1_api/ directory
+# Using relative path from this file's location
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+load_dotenv(env_path)
 
 # Fetch variables
 USER = os.getenv("user")
