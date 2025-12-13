@@ -1,0 +1,50 @@
+# Grid Fans - Backend Dependencies
+# Python 3.12.7
+
+# Web Framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Database & ORM
+sqlmodel==0.0.27
+sqlalchemy==2.0.44
+psycopg2-binary==2.9.10
+pymysql==1.1.1
+
+# Data Validation & Serialization
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# F1 Data Source
+fastf1==3.4.6
+
+# Data Processing
+pandas==2.2.3
+numpy==2.2.1
+scipy==1.14.1
+
+# HTTP Requests & Caching
+requests==2.32.3
+requests-cache==1.2.1
+
+# Visualization (FastF1 dependency)
+matplotlib==3.10.0
+
+# Environment Variables
+python-dotenv==1.0.1
+
+# Date/Time Utilities
+python-dateutil==2.9.0.post0
+
+# Backend as a Service
+supabase==2.10.0
+
+# Testing (optional, for development)
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1
+
+# Code Quality (optional, for development)
+black==24.10.0
+flake8==7.1.1
+mypy==1.13.0
