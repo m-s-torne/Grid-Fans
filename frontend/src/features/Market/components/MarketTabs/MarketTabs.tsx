@@ -39,8 +39,8 @@ export const MarketTabs = ({
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        <span className="hidden sm:inline">Free Agents ({freeDrivers!.length})</span>
-                        <span className="sm:hidden">Free ({freeDrivers!.length})</span>
+                        <span className="hidden sm:inline">Free Agents ({freeDrivers?.length ?? 0})</span>
+                        <span className="sm:hidden">Free ({freeDrivers?.length ?? 0})</span>
                     </div>
                 </button>
                 <button
@@ -55,8 +55,8 @@ export const MarketTabs = ({
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span className="hidden sm:inline">For Sale ({forSaleDrivers!.length})</span>
-                        <span className="sm:hidden">Sale ({forSaleDrivers!.length})</span>
+                        <span className="hidden sm:inline">For Sale ({forSaleDrivers?.length ?? 0})</span>
+                        <span className="sm:hidden">Sale ({forSaleDrivers?.length ?? 0})</span>
                     </div>
                 </button>
                 <button
@@ -71,8 +71,8 @@ export const MarketTabs = ({
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
-                        <span className="hidden sm:inline">My Drivers ({myDrivers!.length})</span>
-                        <span className="sm:hidden">Mine ({myDrivers!.length})</span>
+                        <span className="hidden sm:inline">My Drivers ({myDrivers?.length ?? 0})</span>
+                        <span className="sm:hidden">Mine ({myDrivers?.length ?? 0})</span>
                     </div>
                 </button>
             </div>

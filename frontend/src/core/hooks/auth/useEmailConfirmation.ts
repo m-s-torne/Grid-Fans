@@ -42,8 +42,7 @@ export const useEmailConfirmation = () => {
             const userData = {
                 user_name: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
                 email: user.email!,
-                supabase_user_id: user.id,
-                is_verified: true
+                supabase_user_id: user.id
             }
 
             await backendUserService.createUser(userData)

@@ -4,8 +4,20 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import NullPool
 from sqlmodel import SQLModel
 from urllib.parse import quote_plus
-from f1_api.models.f1_schemas import *
-from f1_api.models.app_models import *
+from f1_api.core.f1_data.domain.models import Seasons, Events, Sessions, SessionResult
+from f1_api.features.teams.domain.models import Teams
+from f1_api.features.drivers.domain.models import Drivers, DriverTeamLink
+from f1_api.features.user.domain.models import Users, UserCreate, UserResponse
+from f1_api.features.leagues.domain.models import Leagues, UserLeagueLink, LeagueCreate, LeagueResponse, LeagueJoin
+from f1_api.features.user_teams.domain.models import UserTeams
+from f1_api.features.user_teams.application.dtos import (
+    UserTeamCreateDTO as UserTeamsCreate,
+    UserTeamUpdateDTO as UserTeamUpdate,
+    UserTeamResponseDTO as UserTeamResponse,
+)
+from f1_api.features.market.infrastructure.models.ownership_model import DriverOwnershipModel
+from f1_api.features.market.infrastructure.models.transaction_model import MarketTransactionModel
+from f1_api.features.market.infrastructure.models.buyout_model import BuyoutClauseHistoryModel
 
 # Load environment variables from .env in f1_api/ directory
 # Using relative path from this file's location

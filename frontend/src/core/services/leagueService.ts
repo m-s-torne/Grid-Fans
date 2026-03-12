@@ -50,21 +50,21 @@ export interface JoinLeagueResponse {
 }
 
 export interface LeagueServiceType {
-    createLeague(leagueData: CreateLeagueRequest, adminUserId: number): Promise<League>
-    getUserLeagues(userId: number): Promise<League[]>
+    createLeague(leagueData: CreateLeagueRequest, adminUserId: string): Promise<League>
+    getUserLeagues(userId: string): Promise<League[]>
     getLeagueById(leagueId: number, userId: string): Promise<League>
-    joinLeague(joinData: JoinLeagueRequest, userId: number): Promise<JoinLeagueResponse>
+    joinLeague(joinData: JoinLeagueRequest, userId: string): Promise<JoinLeagueResponse>
     leaveLeague(leagueId: number, userId: string): Promise<{ message: string; league_id: number }>
     getLeagueParticipants(leagueId: number): Promise<LeagueParticipantsResponse>
 }
 
 export const leagueService: LeagueServiceType = {
-    async createLeague(leagueData: CreateLeagueRequest, adminUserId: number): Promise<League> {
+    async createLeague(leagueData: CreateLeagueRequest, adminUserId: string): Promise<League> {
         const { data } = await http.post(`/leagues/?admin_user_id=${adminUserId}`, leagueData)
         return data
     },
 
-    async getUserLeagues(userId: number): Promise<League[]> {
+    async getUserLeagues(userId: string): Promise<League[]> {
         const { data } = await http.get(`/leagues/user/${userId}`)
         return data
     },
@@ -74,7 +74,7 @@ export const leagueService: LeagueServiceType = {
         return data
     },
 
-    async joinLeague(joinData: JoinLeagueRequest, userId: number): Promise<JoinLeagueResponse> {
+    async joinLeague(joinData: JoinLeagueRequest, userId: string): Promise<JoinLeagueResponse> {
         const { data } = await http.post(`/leagues/join/?user_id=${userId}`, joinData)
         return data
     },

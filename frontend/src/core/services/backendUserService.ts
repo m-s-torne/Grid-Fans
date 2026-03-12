@@ -4,7 +4,6 @@ export interface CreateBackendUserRequest {
     user_name: string;
     email: string;
     supabase_user_id: string;
-    is_verified: boolean;
 }
 
 export interface BackendUserResponse {
@@ -37,12 +36,12 @@ export interface BackendUser {
 export const backendUserService = {
     async createUser(userData: CreateBackendUserRequest): Promise<BackendUserResponse> {
         const { data } = await http.post("/users/", userData)
-        return data.data
+        return data
     },
 
     async getUserBySupabaseId(supabaseUserId: string): Promise<BackendUser> {
         const { data } = await http.get(`/users/by-id/${supabaseUserId}`)
-        return data.data
+        return data
     },
 
     async createUserTeam(userTeam: CreateBackendUserTeam) {
