@@ -3,10 +3,10 @@ from typing import Dict, Any
 import logging
 
 from f1_api.features.market.domain.interfaces import IOwnershipRepository
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
+from f1_api.features.drivers.domain.interfaces import DriversRepository
 from f1_api.features.market.domain.services import DriverEnrichmentService
 from f1_api.features.drivers.application.drivers_utility import DriversUtility
-from f1_api.features.user.infrastructure.repositories import UserRepositoryImpl
+from f1_api.features.user.domain.interfaces import UserRepository
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class GetDriversForSaleUseCase:
         self,
         ownership_repo: IOwnershipRepository,
         drivers_repo: DriversRepository,
-        users_repo: UserRepositoryImpl,
+        users_repo: UserRepository,
     ):
         """
         Initialize use case with required repositories.

@@ -1,19 +1,24 @@
 import logging
 from sqlmodel import Session
-from f1_api.core.f1_data.infrastructure.season_context import SeasonContextController
-from f1_api.data_sources.ff1_client import FastF1Client
+from f1_api.features.drivers.domain.interfaces import DriversRepository as IDriversRepository
+from f1_api.features.teams.domain.interfaces import TeamsRepository as ITeamsRepository
+from f1_api.core.f1_data.domain.interfaces import DriverTeamLinkRepository as IDriverTeamLinkRepository
 from f1_api.features.drivers.domain.models import DriverTeamLink
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
-from f1_api.features.teams.infrastructure.repositories import TeamsRepository
-from f1_api.core.f1_data.infrastructure.persistence.driver_team_link_repository import DriverTeamLinkRepository
 
 class DriverTeamLinkController:
-    def __init__(self, session: Session, year: int):
-        self.season = year
-        self.driver_repository = DriversRepository(session,year)
-        self.team_repository = TeamsRepository(session)
-        self.repository = DriverTeamLinkRepository(session)
-        self.season_context = SeasonContextController(session,FastF1Client)
+    def __init__(
+        self,
+        driver_repository: IDriversRepository,
+        team_repository: ITeamsRepository,
+        repository: IDriverTeamLinkRepository,
+        season_context,
+        season: int,
+    ):
+        self.season = season
+        self.driver_repository = driver_repository
+        self.team_repository = team_repository
+        self.repository = repository
+        self.season_context = season_context
     def get_all_driver_team_links(self) -> list[DriverTeamLink]:
         """
         Returns a list of DriverTeamLink objects for all (driver, team, round) assignments
@@ -58,6 +63,19 @@ class DriverTeamLinkController:
                     logging.warning(f"Round {round_number} not availavle yet: {e}")
                     continue
         return driver_team_links
-def get_all_driver_team_links(session,year):
-    controller = DriverTeamLinkController(session, year)
+def get_all_driver_team_links(
+    session: Session,
+    year: int,
+    driver_repo: IDriversRepository,
+    team_repo: ITeamsRepository,
+    link_repo: IDriverTeamLinkRepository,
+    season_context,
+) -> list[DriverTeamLink]:
+    controller = DriverTeamLinkController(
+        driver_repository=driver_repo,
+        team_repository=team_repo,
+        repository=link_repo,
+        season_context=season_context,
+        season=year,
+    )
     return controller.get_all_driver_team_links()

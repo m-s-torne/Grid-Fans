@@ -4,9 +4,16 @@ Pure business logic services without infrastructure dependencies
 """
 import logging
 from sqlmodel import Session, select
-from fastapi import HTTPException
 
 from f1_api.features.drivers.domain.models import Drivers
+from f1_api.features.user_teams.domain.exceptions import (
+    DuplicateDriverError,
+    DriverNotInTeamError,
+    DriverAlreadyReserveError,
+    DriverNotFoundError,
+    ConstructorNotFoundError,
+    BudgetExceededError,
+)
 from f1_api.features.teams.domain.models import Teams
 from f1_api.core.f1_data.domain.models import SessionResult
 
@@ -120,10 +127,7 @@ class BudgetCalculationService:
                 missing.append(driver_2_id)
             if not driver_3:
                 missing.append(driver_3_id)
-            raise HTTPException(
-                status_code=404, 
-                detail=f"Drivers not found with IDs: {missing}"
-            )
+            raise DriverNotFoundError(f"Drivers not found with IDs: {missing}")
         
         # Get constructor
         constructor = self.session.exec(
@@ -131,7 +135,7 @@ class BudgetCalculationService:
         ).first()
         
         if not constructor:
-            raise HTTPException(status_code=404, detail="Constructor not found")
+            raise ConstructorNotFoundError("Constructor not found")
         
         # Calculate total cost
         driver_costs = []
@@ -154,9 +158,8 @@ class BudgetCalculationService:
         
         # Validate budget
         if budget_remaining < 0:
-            raise HTTPException(
-                status_code=400, 
-                detail=f"Budget exceeded. Total cost: ${total_cost / 1_000_000:.1f}M, Budget: ${self.INITIAL_BUDGET / 1_000_000:.1f}M"
+            raise BudgetExceededError(
+                f"Budget exceeded. Total cost: ${total_cost / 1_000_000:.1f}M, Budget: ${self.INITIAL_BUDGET / 1_000_000:.1f}M"
             )
         
         return budget_remaining
@@ -182,7 +185,7 @@ class TeamValidationService:
         """
         driver_ids = [driver_1_id, driver_2_id, driver_3_id]
         if len(set(driver_ids)) != 3:
-            raise HTTPException(status_code=400, detail="All drivers must be unique")
+            raise DuplicateDriverError("All drivers must be unique")
     
     @staticmethod
     def validate_driver_in_team(
@@ -215,6 +218,6 @@ class TeamValidationService:
         elif driver_3_id == driver_id:
             return 3
         elif reserve_driver_id == driver_id:
-            raise HTTPException(400, "Driver is already in reserve position")
+            raise DriverAlreadyReserveError("Driver is already in reserve position")
         else:
-            raise HTTPException(400, "Driver not found in team")
+            raise DriverNotInTeamError("Driver not found in team")

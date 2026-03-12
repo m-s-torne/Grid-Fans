@@ -16,7 +16,7 @@ from f1_api.features.market.application.dtos.responses import (
     DriverOwnershipResponse,
     MarketTransactionResponse,
 )
-from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
+from f1_api.features.user_teams.domain.interfaces import UserTeamsRepository
 
 
 class PurchaseDriverUseCase:
@@ -36,7 +36,7 @@ class PurchaseDriverUseCase:
         self,
         ownership_repo: IOwnershipRepository,
         transaction_repo: ITransactionRepository,
-        user_teams_repo: UserTeamsRepositoryImpl,
+        user_teams_repo: UserTeamsRepository,
     ):
         """
         Initialize use case with required repositories.

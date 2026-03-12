@@ -8,7 +8,7 @@ from ..domain.interfaces import LeagueRepository, UserLeagueLinkRepository, IIni
 from ..domain.models import LeagueCreate
 from ..application.dtos import LeagueCreateDTO, LeagueResponseDTO, LeagueJoinDTO, LeagueListItemDTO
 from f1_api.features.user.domain.interfaces import UserRepository
-from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
+from f1_api.features.user_teams.domain.interfaces import UserTeamsRepository
 
 
 class CreateLeagueService:
@@ -365,12 +365,12 @@ class LeaveLeagueService:
         league_repo: LeagueRepository,
         user_repo: UserRepository,
         membership_repo: UserLeagueLinkRepository,
-        session: Session
+        user_teams_repo: UserTeamsRepository,
     ):
         self.league_repo = league_repo
         self.user_repo = user_repo
         self.membership_repo = membership_repo
-        self.session = session
+        self.user_teams_repo = user_teams_repo
     
     def execute(self, league_id: int, user_id: str) -> dict:
         """Remove user from a league and delete their team
@@ -404,13 +404,9 @@ class LeaveLeagueService:
         self.membership_repo.deactivate_membership(user.id, league_id)
         
         # Delete user's team in the league
-        user_teams_repo = UserTeamsRepositoryImpl(self.session)
-        team = user_teams_repo.get_by_league_and_user(league_id, user.id)
+        team = self.user_teams_repo.get_by_league_and_user(league_id, user.id)
         if team:
-            user_teams_repo.hard_delete(team.id)
-        
-        # Commit changes
-        self.session.commit()
+            self.user_teams_repo.hard_delete(team.id)
         
         return {
             "message": f"Successfully left league '{league.name}'",

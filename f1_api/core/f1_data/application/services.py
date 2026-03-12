@@ -2,20 +2,24 @@
 from datetime import datetime
 import logging
 from sqlmodel import Session
-from f1_api.core.f1_data.infrastructure.season_context import SeasonContextController
-from f1_api.data_sources.ff1_client import FastF1Client
 from f1_api.features.drivers.domain.models import Drivers
+from f1_api.features.drivers.domain.interfaces import DriversRepository as IDriversRepository
 from f1_api.features.drivers.application.drivers_utility import DriversUtility
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
+from f1_api.core.f1_data.domain.interfaces import ISeasonContext
 
 class DriversController:
     """Provides drivers response"""
-    def __init__(self, session: Session):
+    def __init__(
+        self,
+        session: Session,
+        repository: IDriversRepository | None = None,
+        season_context: ISeasonContext | None = None,
+    ):
         self.session = session
         self.season = datetime.now().year
-        self.repository = DriversRepository(session,self.season)
+        self.repository = repository
         self.business_logic = DriversUtility()
-        self.season_context = SeasonContextController(session, FastF1Client)
+        self.season_context = season_context
     def get_drivers_service(self) -> list:
         """
         Get all drivers sorted by championship points up to the last round
@@ -108,15 +112,23 @@ class DriversController:
         all_drivers = self.repository.get_all_drivers()
         driver_id_map = {driver.driver_number: driver.id for driver in all_drivers}
         return driver_id_map
-def get_drivers_service(session: Session) -> list:
+def get_drivers_service(
+    session: Session,
+    driver_repo: IDriversRepository,
+    season_context: ISeasonContext | None = None,
+) -> list:
     """
     Legacy function for getting drivers
     """
-    controller = DriversController(session)
+    controller = DriversController(session, repository=driver_repo, season_context=season_context)
     return controller.get_drivers_service()
-def get_driver_data(session):
-    drivers_controller = DriversController(session)
+def get_driver_data(
+    session: Session,
+    driver_repo: IDriversRepository,
+    season_context: ISeasonContext,
+) -> list[Drivers]:
+    drivers_controller = DriversController(session, repository=driver_repo, season_context=season_context)
     return drivers_controller.get_driver_data()
-def get_drivers_id_map(session):
-    drivers_controller = DriversController(session)
+def get_drivers_id_map(session: Session, driver_repo: IDriversRepository):
+    drivers_controller = DriversController(session, repository=driver_repo)
     return drivers_controller.get_drivers_id_map()

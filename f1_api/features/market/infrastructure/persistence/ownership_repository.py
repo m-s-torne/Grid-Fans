@@ -141,3 +141,18 @@ class OwnershipRepository:
         self.session.refresh(model)
         
         return OwnershipMapper.to_entity(model)
+
+    def create(self, ownership: DriverOwnership) -> DriverOwnership:
+        """
+        Create a new driver ownership record.
+
+        Args:
+            ownership: DriverOwnership entity to persist
+
+        Returns:
+            Created DriverOwnership entity
+        """
+        model = OwnershipMapper.to_model(ownership)
+        self.session.add(model)
+        self.session.flush()
+        return OwnershipMapper.to_entity(model)

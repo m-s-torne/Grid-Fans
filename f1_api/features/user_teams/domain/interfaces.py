@@ -10,7 +10,7 @@ class UserTeamsRepository(Protocol):
         """Get a user team by ID"""
         ...
     
-    def get_by_league_and_user(self, user_id: int, league_id: int) -> UserTeams | None:
+    def get_by_league_and_user(self, league_id: int, user_id: int) -> UserTeams | None:
         """Get active team for a user in a specific league"""
         ...
     
@@ -30,6 +30,6 @@ class UserTeamsRepository(Protocol):
         """Soft delete a team (set is_active=False)"""
         ...
     
-    def hard_delete(self, team: UserTeams) -> None:
+    def hard_delete(self, team_id: int) -> bool:
         """Hard delete a team from database"""
         ...

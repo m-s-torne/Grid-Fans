@@ -8,6 +8,14 @@ from fastapi import HTTPException
 
 from ..domain.interfaces import UserTeamsRepository
 from ..domain.services import DriverPricingService, BudgetCalculationService, TeamValidationService
+from ..domain.exceptions import (
+    DuplicateDriverError,
+    DriverNotInTeamError,
+    DriverAlreadyReserveError,
+    DriverNotFoundError,
+    ConstructorNotFoundError,
+    BudgetExceededError,
+)
 from .dtos import UserTeamCreateDTO, UserTeamUpdateDTO, UserTeamResponseDTO
 from .mappers import UserTeamMapper, TeamEnrichmentService
 
@@ -86,19 +94,29 @@ class CreateOrUpdateTeamService:
             raise HTTPException(status_code=403, detail="Access denied: You are not a member of this league")
         
         # Validate drivers are unique (using domain service)
-        self.validation_service.validate_unique_drivers(
-            team_data.driver_1_id,
-            team_data.driver_2_id,
-            team_data.driver_3_id
-        )
+        try:
+            self.validation_service.validate_unique_drivers(
+                team_data.driver_1_id,
+                team_data.driver_2_id,
+                team_data.driver_3_id
+            )
+        except DuplicateDriverError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
         
         # Calculate budget remaining (using domain service)
-        budget_remaining = self.budget_service.calculate_remaining_budget(
-            team_data.driver_1_id,
-            team_data.driver_2_id,
-            team_data.driver_3_id,
-            team_data.constructor_id
-        )
+        try:
+            budget_remaining = self.budget_service.calculate_remaining_budget(
+                team_data.driver_1_id,
+                team_data.driver_2_id,
+                team_data.driver_3_id,
+                team_data.constructor_id
+            )
+        except DriverNotFoundError as e:
+            raise HTTPException(status_code=404, detail=str(e)) from e
+        except ConstructorNotFoundError as e:
+            raise HTTPException(status_code=404, detail=str(e)) from e
+        except BudgetExceededError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
         
         # Check if user already has a team in this league
         existing_team = self.user_teams_repo.get_by_league_and_user(league_id, user.id)
@@ -277,13 +295,18 @@ class SwapReserveDriverService:
             raise HTTPException(404, "Team not found")
         
         # Validate driver is in team and get slot (using domain service)
-        driver_slot = self.validation_service.validate_driver_in_team(
-            driver_id,
-            team.driver_1_id,
-            team.driver_2_id,
-            team.driver_3_id,
-            team.reserve_driver_id
-        )
+        try:
+            driver_slot = self.validation_service.validate_driver_in_team(
+                driver_id,
+                team.driver_1_id,
+                team.driver_2_id,
+                team.driver_3_id,
+                team.reserve_driver_id
+            )
+        except DriverAlreadyReserveError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
+        except DriverNotInTeamError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
         
         # Swap drivers
         current_reserve = team.reserve_driver_id

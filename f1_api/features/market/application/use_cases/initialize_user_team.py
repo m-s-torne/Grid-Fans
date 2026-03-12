@@ -5,12 +5,10 @@ from datetime import datetime
 from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from f1_api.features.market.infrastructure.models.ownership_model import DriverOwnershipModel
-from f1_api.features.market.infrastructure.models.transaction_model import MarketTransactionModel
-from f1_api.features.market.infrastructure.persistence.ownership_repository import OwnershipRepository
-from f1_api.features.leagues.infrastructure.market.repositories import MarketTransactionsRepository
-from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
+from f1_api.features.market.domain.interfaces import IOwnershipRepository, ITransactionRepository
+from f1_api.features.market.domain.entities import MarketTransaction
+from f1_api.features.user_teams.domain.interfaces import UserTeamsRepository
+from f1_api.features.drivers.domain.interfaces import DriversRepository as IDriversRepository
 from f1_api.features.teams.domain.models import Teams
 from f1_api.features.user_teams.domain.models import UserTeams
 
@@ -26,12 +24,19 @@ class InitializeUserTeamUseCase:
     Assigns 3 random Tier C drivers (free), creates UserTeams record with 100M budget.
     """
 
-    def __init__(self, session: Session):
+    def __init__(
+        self,
+        ownership_repo: IOwnershipRepository,
+        transactions_repo: ITransactionRepository,
+        user_teams_repo: UserTeamsRepository,
+        drivers_repo: IDriversRepository,
+        session: Session,  # TODO: move Teams lookup and UserTeams creation behind repo interfaces
+    ):
+        self.ownership_repo = ownership_repo
+        self.transactions_repo = transactions_repo
+        self.user_teams_repo = user_teams_repo
+        self.drivers_repo = drivers_repo
         self.session = session
-        self.ownership_repo = OwnershipRepository(session)
-        self.transactions_repo = MarketTransactionsRepository(session)
-        self.user_teams_repo = UserTeamsRepositoryImpl(session)
-        self.drivers_repo = DriversRepository(session, CURRENT_SEASON)
 
     def execute(self, user_id: int, league_id: int) -> dict:
         """
@@ -69,7 +74,7 @@ class InitializeUserTeamUseCase:
             self.ownership_repo.update(ownership)
             assigned_drivers.append(driver_id)
 
-            transaction = MarketTransactionModel(
+            transaction = MarketTransaction(
                 driver_id=driver_id,
                 league_id=league_id,
                 seller_id=None,

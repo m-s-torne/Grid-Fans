@@ -1,7 +1,7 @@
 """Drivers application services"""
 import logging
 from sqlmodel import Session
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
+from f1_api.features.drivers.domain.interfaces import DriversRepository
 from f1_api.features.drivers.application.drivers_utility import DriversUtility
 
 logger = logging.getLogger(__name__)

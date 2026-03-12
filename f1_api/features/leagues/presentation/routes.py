@@ -57,6 +57,8 @@ from f1_api.features.user.infrastructure.repositories import UserRepositoryImpl
 
 router = APIRouter(prefix="/leagues", tags=["leagues"])
 
+CURRENT_SEASON = 2025  # TODO: drive from config / DB
+
 
 @router.post("/", response_model=LeagueResponseDTO)
 def create_league(
@@ -73,8 +75,17 @@ def create_league(
     # Execute use case
     service = CreateLeagueService(
         league_repo, user_repo, user_link_repo, session,
-        initialize_ownership=InitializeLeagueOwnershipUseCase(session),
-        initialize_user_team=InitializeUserTeamUseCase(session),
+        initialize_ownership=InitializeLeagueOwnershipUseCase(
+            ownership_repo=OwnershipRepository(session),
+            drivers_repo=DriversRepository(session, CURRENT_SEASON),
+        ),
+        initialize_user_team=InitializeUserTeamUseCase(
+            ownership_repo=OwnershipRepository(session),
+            transactions_repo=TransactionRepository(session),
+            user_teams_repo=UserTeamsRepositoryImpl(session),
+            drivers_repo=DriversRepository(session, CURRENT_SEASON),
+            session=session,
+        ),
     )
     return service.execute(admin_user_id, league)
 
@@ -94,7 +105,13 @@ def join_league(
     # Execute use case
     service = JoinLeagueService(
         league_repo, user_repo, user_link_repo, session,
-        initialize_user_team=InitializeUserTeamUseCase(session),
+        initialize_user_team=InitializeUserTeamUseCase(
+            ownership_repo=OwnershipRepository(session),
+            transactions_repo=TransactionRepository(session),
+            user_teams_repo=UserTeamsRepositoryImpl(session),
+            drivers_repo=DriversRepository(session, CURRENT_SEASON),
+            session=session,
+        ),
     )
     return service.execute(user_id, league_join)
 
@@ -164,10 +181,13 @@ def leave_league(
     league_repo = LeagueRepositoryImpl(session)
     user_repo = UserRepositoryImpl(session)
     user_link_repo = UserLeagueLinkRepositoryImpl(session)
+    user_teams_repo = UserTeamsRepositoryImpl(session)
     
     # Execute use case
-    service = LeaveLeagueService(league_repo, user_repo, user_link_repo, session)
-    return service.execute(league_id, user_id)
+    service = LeaveLeagueService(league_repo, user_repo, user_link_repo, user_teams_repo)
+    result = service.execute(league_id, user_id)
+    session.commit()
+    return result
 
 
 

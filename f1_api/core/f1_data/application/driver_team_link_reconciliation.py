@@ -7,16 +7,21 @@ when SessionResults exist but the corresponding links were not created.
 import logging
 import fastf1 as ff1
 from sqlmodel import Session, select
-from f1_api.core.f1_data.infrastructure.season_context import SeasonContextController
-from f1_api.data_sources.ff1_client import FastF1Client
 from f1_api.core.f1_data.domain.models import SessionResult
 from f1_api.features.drivers.domain.models import DriverTeamLink
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
-from f1_api.features.teams.infrastructure.repositories import TeamsRepository
-from f1_api.core.f1_data.infrastructure.persistence.driver_team_link_repository import DriverTeamLinkRepository
+from f1_api.features.drivers.domain.interfaces import DriversRepository as IDriversRepository
+from f1_api.features.teams.domain.interfaces import TeamsRepository as ITeamsRepository
+from f1_api.core.f1_data.domain.interfaces import DriverTeamLinkRepository as IDriverTeamLinkRepository
 
 
-async def reconcile_driver_team_links(session: Session, year: int):
+async def reconcile_driver_team_links(
+    session: Session,
+    year: int,
+    driver_repo: IDriversRepository,
+    team_repo: ITeamsRepository,
+    link_repo: IDriverTeamLinkRepository,
+    season_context,
+):
     """
     Reconciles missing DriverTeamLinks for SessionResults that exist.
     
@@ -53,10 +58,6 @@ async def reconcile_driver_team_links(session: Session, year: int):
     
     # 4. Create DriverTeamLinks only for the missing rounds
     driver_team_links = []
-    season_context = SeasonContextController(session, FastF1Client)
-    driver_repo = DriversRepository(session, year)
-    team_repo = TeamsRepository(session)
-    link_repo = DriverTeamLinkRepository(session)
     existing_links = link_repo.get_existing_links()
     
     links_set = set()  # Track links in this batch to avoid duplicates

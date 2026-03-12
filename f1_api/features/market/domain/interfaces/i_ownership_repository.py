@@ -88,3 +88,15 @@ class IOwnershipRepository(Protocol):
             Updated DriverOwnership entity
         """
         ...
+
+    def create(self, ownership: "DriverOwnership") -> "DriverOwnership":
+        """
+        Create a new driver ownership record.
+
+        Args:
+            ownership: DriverOwnership entity to persist
+
+        Returns:
+            Created DriverOwnership entity
+        """
+        ...

@@ -12,7 +12,7 @@ from f1_api.features.market.application.dtos.responses import (
     MarketTransactionResponse,
     ValidationErrorResponse,
 )
-from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
+from f1_api.features.user_teams.domain.interfaces import UserTeamsRepository
 
 # Constants
 SELL_TO_MARKET_REFUND = 0.8  # 80% refund when quick selling
@@ -34,7 +34,7 @@ class SellToMarketUseCase:
         self,
         ownership_repo: IOwnershipRepository,
         transaction_repo: ITransactionRepository,
-        user_teams_repo: UserTeamsRepositoryImpl,
+        user_teams_repo: UserTeamsRepository,
     ):
         """
         Initialize use case with required repositories.

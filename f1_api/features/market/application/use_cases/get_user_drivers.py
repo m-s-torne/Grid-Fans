@@ -3,7 +3,7 @@ from typing import Dict, Any
 import logging
 
 from f1_api.features.market.domain.interfaces import IOwnershipRepository
-from f1_api.features.drivers.infrastructure.persistence import DriversRepository
+from f1_api.features.drivers.domain.interfaces import DriversRepository
 from f1_api.features.market.domain.services import DriverEnrichmentService
 from f1_api.features.drivers.application.drivers_utility import DriversUtility
 
