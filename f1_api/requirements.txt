@@ -30,6 +30,9 @@ requests-cache==1.2.1
 # Visualization (FastF1 dependency)
 matplotlib==3.10.0
 
+# JWT Authentication
+python-jose[cryptography]==3.3.0
+
 # Environment Variables
 python-dotenv==1.0.1
 
