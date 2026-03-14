@@ -2,7 +2,6 @@ import { useState } from 'react';
 import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
 import { 
   formatCurrencyNumber, 
-  parseCurrencyInput, 
   calculateDriverSaleValues, 
   calculateSaleProfit 
 } from '@/features/Market/utils';
@@ -48,13 +47,15 @@ export const useDriverSaleModal = ({
   
   const handlePriceChange = (value: string) => {
     setInputValue(value);
-    const numValue = parseCurrencyInput(value);
+    const cleaned = value.replace(/[^0-9.-]/g, '');
+    const numValue = parseFloat(cleaned);
     if (isNaN(numValue) || numValue <= 0) {
       setError('Please enter a valid price');
       setCustomPrice(0);
       return;
     }
-    setCustomPrice(numValue);
+    // Input is displayed in millions (no "M" suffix), so convert back to base units
+    setCustomPrice(Math.round(numValue * 1_000_000));
     setError(null);
   };
   
