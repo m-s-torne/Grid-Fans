@@ -50,37 +50,37 @@ export interface JoinLeagueResponse {
 }
 
 export interface LeagueServiceType {
-    createLeague(leagueData: CreateLeagueRequest, adminUserId: string): Promise<League>
-    getUserLeagues(userId: string): Promise<League[]>
-    getLeagueById(leagueId: number, userId: string): Promise<League>
-    joinLeague(joinData: JoinLeagueRequest, userId: string): Promise<JoinLeagueResponse>
-    leaveLeague(leagueId: number, userId: string): Promise<{ message: string; league_id: number }>
+    createLeague(leagueData: CreateLeagueRequest): Promise<League>
+    getUserLeagues(): Promise<League[]>
+    getLeagueById(leagueId: number): Promise<League>
+    joinLeague(joinData: JoinLeagueRequest): Promise<JoinLeagueResponse>
+    leaveLeague(leagueId: number): Promise<{ message: string; league_id: number }>
     getLeagueParticipants(leagueId: number): Promise<LeagueParticipantsResponse>
 }
 
 export const leagueService: LeagueServiceType = {
-    async createLeague(leagueData: CreateLeagueRequest, adminUserId: string): Promise<League> {
-        const { data } = await http.post(`/leagues/?admin_user_id=${adminUserId}`, leagueData)
+    async createLeague(leagueData: CreateLeagueRequest): Promise<League> {
+        const { data } = await http.post(`/leagues/`, leagueData)
         return data
     },
 
-    async getUserLeagues(userId: string): Promise<League[]> {
-        const { data } = await http.get(`/leagues/user/${userId}`)
+    async getUserLeagues(): Promise<League[]> {
+        const { data } = await http.get(`/leagues/user/me`)
         return data
     },
 
-    async getLeagueById(leagueId: number, userId: string): Promise<League> {
-        const { data } = await http.get(`/leagues/${leagueId}?user_id=${userId}`)
+    async getLeagueById(leagueId: number): Promise<League> {
+        const { data } = await http.get(`/leagues/${leagueId}`)
         return data
     },
 
-    async joinLeague(joinData: JoinLeagueRequest, userId: string): Promise<JoinLeagueResponse> {
-        const { data } = await http.post(`/leagues/join/?user_id=${userId}`, joinData)
+    async joinLeague(joinData: JoinLeagueRequest): Promise<JoinLeagueResponse> {
+        const { data } = await http.post(`/leagues/join/`, joinData)
         return data
     },
 
-    async leaveLeague(leagueId: number, userId: string): Promise<{ message: string; league_id: number }> {
-        const { data } = await http.delete(`/leagues/${leagueId}/leave?user_id=${userId}`)
+    async leaveLeague(leagueId: number): Promise<{ message: string; league_id: number }> {
+        const { data } = await http.delete(`/leagues/${leagueId}/leave`)
         return data
     },
 

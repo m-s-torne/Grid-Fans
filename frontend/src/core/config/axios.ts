@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { supabase } from '@/core/config/supabase'
 import { ENV } from '../services/env'
 
 export const http = axios.create({
@@ -6,6 +7,15 @@ export const http = axios.create({
     headers: {
         accept: 'application/json',
     },
+});
+
+http.interceptors.request.use(async (config) => {
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 http.interceptors.response.use(

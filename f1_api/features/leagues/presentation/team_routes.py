@@ -35,7 +35,7 @@ def swap_reserve_driver_in_league(
     user_teams_repo = UserTeamsRepositoryImpl(session)
     service = SwapReserveDriverService(session, user_teams_repo)
     return service.execute(
-        user_id=current_user.supabase_user_id,
+        user_id=current_user.id,
         driver_id=request["driver_id"],
         league_id=league_id
     )

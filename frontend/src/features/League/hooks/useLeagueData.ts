@@ -15,7 +15,7 @@ export const useLeagueData = (leagueId: string | undefined) => {
     
     const leagueQuery = useQuery({
         queryKey: ['league-detail', leagueId, user?.id],
-        queryFn: () => leagueService.getLeagueById(parseInt(leagueId!), user!.id),
+        queryFn: () => leagueService.getLeagueById(parseInt(leagueId!)),
         enabled: !!leagueId && !!user?.id,
         staleTime: 5 * 60 * 1000,
         retry: 1,

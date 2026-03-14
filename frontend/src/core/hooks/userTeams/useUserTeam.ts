@@ -8,7 +8,7 @@ export const useUserTeam = (leagueId: number) => {
     
     return useQuery({
         queryKey: ['user-team', leagueId, user?.id],
-        queryFn: () => userTeamService.getMyTeam(leagueId, user!.id),
+        queryFn: () => userTeamService.getMyTeam(leagueId),
         enabled: !!leagueId && !!user?.id,
         staleTime: 5 * 60 * 1000, // 5 minutos
     });
@@ -20,7 +20,7 @@ export const useCreateOrUpdateTeam = () => {
     
     return useMutation({
         mutationFn: ({ leagueId, teamData }: { leagueId: number; teamData: CreateUserTeamRequest }) =>
-            userTeamService.createOrUpdateTeam(leagueId, teamData, user!.id),
+            userTeamService.createOrUpdateTeam(leagueId, teamData),
         onSuccess: (_, variables) => {
             // Invalidar las queries relacionadas
             queryClient.invalidateQueries({ queryKey: ['user-team', variables.leagueId] });

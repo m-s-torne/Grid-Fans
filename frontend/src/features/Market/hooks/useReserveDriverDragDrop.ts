@@ -67,7 +67,6 @@ export const useReserveDriverDragDrop = ({
             await swapReserve({
                 leagueId,
                 driverId: driverToMakeReserve,
-                userId,
             });
         } finally {
             // Clear swapping state after mutation completes

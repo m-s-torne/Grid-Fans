@@ -5,8 +5,8 @@ export const useSwapReserveDriver = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ leagueId, driverId, userId }: { leagueId: number; driverId: number; userId: number }) =>
-      userTeamService.swapReserveDriver(leagueId, driverId, userId),
+    mutationFn: ({ leagueId, driverId }: { leagueId: number; driverId: number }) =>
+      userTeamService.swapReserveDriver(leagueId, driverId),
     
     // Optimistic update: actualizar UI inmediatamente antes de la respuesta del backend
     onMutate: async (variables) => {

@@ -28,3 +28,6 @@ frontend/src/components/Models/**
 *.njsproj
 *.sln
 *.sw?
+
+#Python unnecessary files and folders
+__pycache__/

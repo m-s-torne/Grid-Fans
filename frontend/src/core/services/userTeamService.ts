@@ -51,21 +51,21 @@ export interface UserTeamWithDetails {
 }
 
 export interface UserTeamServiceType {
-    createOrUpdateTeam(leagueId: number, teamData: CreateUserTeamRequest, userId: string): Promise<UserTeam>
-    getMyTeam(leagueId: number, userId: string): Promise<UserTeam | null>
-    getAllMyTeams(userId: string): Promise<UserTeamWithDetails[]>
-    swapReserveDriver(leagueId: number, driverId: number, userId: number): Promise<{ success: boolean; message: string; team: any }>
+    createOrUpdateTeam(leagueId: number, teamData: CreateUserTeamRequest): Promise<UserTeam>
+    getMyTeam(leagueId: number): Promise<UserTeam | null>
+    getAllMyTeams(): Promise<UserTeamWithDetails[]>
+    swapReserveDriver(leagueId: number, driverId: number): Promise<{ success: boolean; message: string; team: any }>
 }
 
 export const userTeamService: UserTeamServiceType = {
-    async createOrUpdateTeam(leagueId: number, teamData: CreateUserTeamRequest, userId: string): Promise<UserTeam> {
-        const { data } = await http.post(`/leagues/${leagueId}/teams?user_id=${userId}`, teamData)
+    async createOrUpdateTeam(leagueId: number, teamData: CreateUserTeamRequest): Promise<UserTeam> {
+        const { data } = await http.post(`/leagues/${leagueId}/teams`, teamData)
         return data
     },
 
-    async getMyTeam(leagueId: number, userId: string): Promise<UserTeam | null> {
+    async getMyTeam(leagueId: number): Promise<UserTeam | null> {
         try {
-            const { data } = await http.get(`/leagues/${leagueId}/teams/me?user_id=${userId}`)
+            const { data } = await http.get(`/leagues/${leagueId}/teams/me`)
             return data
         } catch (error: any) {
             if (error.response?.status === 404) {
@@ -75,14 +75,13 @@ export const userTeamService: UserTeamServiceType = {
         }
     },
 
-    async getAllMyTeams(userId: string): Promise<UserTeamWithDetails[]> {
-        const { data } = await http.get(`/users/my-teams?user_id=${userId}`)
+    async getAllMyTeams(): Promise<UserTeamWithDetails[]> {
+        const { data } = await http.get(`/users/my-teams`)
         return data
     },
 
-    async swapReserveDriver(leagueId: number, driverId: number, userId: number): Promise<{ success: boolean; message: string; team: any }> {
+    async swapReserveDriver(leagueId: number, driverId: number): Promise<{ success: boolean; message: string; team: any }> {
         const { data } = await http.post(`/leagues/${leagueId}/teams/swap-reserve`, {
-            user_id: userId,
             driver_id: driverId
         })
         return data

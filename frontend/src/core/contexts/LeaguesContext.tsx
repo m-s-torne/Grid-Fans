@@ -38,7 +38,7 @@ export const LeaguesProvider = ({ children }: { children: ReactNode }) => {
   // Query para obtener ligas del usuario
   const { data: leagues = [], isLoading, error, refetch } = useQuery({
     queryKey: ['leagues', user?.id],
-    queryFn: () => leagueService.getUserLeagues(user!.id),
+    queryFn: () => leagueService.getUserLeagues(),
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutos
     placeholderData: (previousData) => previousData, // Mantener datos anteriores durante refetch
@@ -47,7 +47,7 @@ export const LeaguesProvider = ({ children }: { children: ReactNode }) => {
   // Mutation para crear liga
   const createLeagueMutation = useMutation({
     mutationFn: (leagueData: CreateLeagueRequest) => 
-      leagueService.createLeague(leagueData, user!.id),
+      leagueService.createLeague(leagueData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leagues', user?.id] })
     }
@@ -56,7 +56,7 @@ export const LeaguesProvider = ({ children }: { children: ReactNode }) => {
   // Mutation para unirse a liga
   const joinLeagueMutation = useMutation({
     mutationFn: (joinData: JoinLeagueRequest) => 
-      leagueService.joinLeague(joinData, user!.id),
+      leagueService.joinLeague(joinData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leagues', user?.id] })
     }
@@ -65,7 +65,7 @@ export const LeaguesProvider = ({ children }: { children: ReactNode }) => {
   // Mutation para abandonar liga
   const leaveLeagueMutation = useMutation({
     mutationFn: (leagueId: number) => 
-      leagueService.leaveLeague(leagueId, user!.id),
+      leagueService.leaveLeague(leagueId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['leagues', user?.id] })
       // También invalidar el equipo del usuario para esa liga específica
