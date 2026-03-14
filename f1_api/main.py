@@ -1,8 +1,10 @@
 """In this module the api exposes the endpoints"""
 import os
 import fastf1 as ff1
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from dotenv import load_dotenv
 from f1_api.features.leagues.presentation.routes import router as leagues_router
 from f1_api.features.teams.presentation.routes import router as teams_router
@@ -26,6 +28,15 @@ app.include_router(drivers_router, prefix="/api", tags=["Drivers - DDD"])
 app.include_router(user_teams_router, prefix="/api", tags=["User Teams - DDD"])
 app.include_router(market_router, prefix="/api", tags=["Market - DDD"])
 
+# Security headers middleware
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
 # Configure CORS origins from environment variable
 cors_origins = os.getenv('CORS_ORIGINS', 'http://localhost:5173').split(',')
 
@@ -33,6 +44,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
+
+# TrustedHostMiddleware — prevents HTTP Host header injection
+allowed_hosts = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
+
+# GZipMiddleware — compresses responses above 1 KB
+app.add_middleware(GZipMiddleware, minimum_size=1000)
