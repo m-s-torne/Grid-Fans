@@ -2,11 +2,13 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
+from f1_api.dependencies import get_db_session
+from f1_api.dependencies.auth import get_current_user
+from f1_api.features.user.domain.models import Users
+from f1_api.features.user_teams.application.services import GetAllMyTeamsService
 from ..application.services import CreateUserService, GetUserService
 from ..application.dtos import UserCreateDTO, UserResponseDTO
 from ..infrastructure.repositories import UserRepositoryImpl
-from f1_api.dependencies import get_db_session
-from f1_api.features.user_teams.application.services import GetAllMyTeamsService
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -41,8 +43,8 @@ def get_user_by_id(
 
 @router.get("/my-teams")
 def get_my_teams(
-    user_id: str,
-    session: Session = Depends(get_db_session)
+    session: Session = Depends(get_db_session),
+    current_user: Users = Depends(get_current_user),
 ):
     """
     Get all teams belonging to the current user across all leagues
@@ -54,4 +56,4 @@ def get_my_teams(
     """
     user_repo = UserRepositoryImpl(session)
     service = GetAllMyTeamsService(session, user_repo)
-    return service.execute(user_id)
+    return service.execute(current_user.supabase_user_id)

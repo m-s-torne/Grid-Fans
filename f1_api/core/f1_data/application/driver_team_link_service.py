@@ -1,5 +1,4 @@
 import logging
-from sqlmodel import Session
 from f1_api.features.drivers.domain.interfaces import DriversRepository as IDriversRepository
 from f1_api.features.teams.domain.interfaces import TeamsRepository as ITeamsRepository
 from f1_api.core.f1_data.domain.interfaces import DriverTeamLinkRepository as IDriverTeamLinkRepository
@@ -63,19 +62,3 @@ class DriverTeamLinkController:
                     logging.warning(f"Round {round_number} not availavle yet: {e}")
                     continue
         return driver_team_links
-def get_all_driver_team_links(
-    session: Session,
-    year: int,
-    driver_repo: IDriversRepository,
-    team_repo: ITeamsRepository,
-    link_repo: IDriverTeamLinkRepository,
-    season_context,
-) -> list[DriverTeamLink]:
-    controller = DriverTeamLinkController(
-        driver_repository=driver_repo,
-        team_repository=team_repo,
-        repository=link_repo,
-        season_context=season_context,
-        season=year,
-    )
-    return controller.get_all_driver_team_links()
