@@ -1,0 +1,99 @@
+'use client';
+
+import { useState } from 'react';
+import type { DriverWithOwnership } from '@/features/Market/types/marketTypes';
+import { 
+  formatCurrencyNumber, 
+  calculateDriverSaleValues, 
+  calculateSaleProfit 
+} from '@/features/Market/utils';
+import { useMarketContext } from '@/lib/contexts/MarketContext';
+import { getModalUIConfig, type ModalMode } from '@/features/Market/config/modalUIConfig';
+
+interface UseDriverSaleModalProps {
+  driver: DriverWithOwnership | null;
+  userDriverCount?: number;
+  userBudget?: number;
+  mode: ModalMode;
+}
+
+export const useDriverSaleModal = ({
+  driver,
+  mode,
+}: UseDriverSaleModalProps) => {
+  const {
+    userState,
+    handlers,
+  } = useMarketContext()
+
+  const {
+    acquisitionPrice,
+    refundAmount,
+    loss,
+    price,
+    budgetAfter,
+    suggestedPrice
+  } = calculateDriverSaleValues(driver!, userState.userBudget || 0);
+  
+  const [inputValue, setInputValue] = useState(formatCurrencyNumber(suggestedPrice));
+  const [customPrice, setCustomPrice] = useState(suggestedPrice);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { profit, profitPercentage } = calculateSaleProfit(customPrice, acquisitionPrice);
+  
+  const canProceed = mode === 'buyDriver' ? true : (userState.userDriverCount || 0) > 3;
+  
+  const handlePriceChange = (value: string) => {
+    setInputValue(value);
+    const cleaned = value.replace(/[^0-9.-]/g, '');
+    const numValue = parseFloat(cleaned);
+    if (isNaN(numValue) || numValue <= 0) {
+      setError('Please enter a valid price');
+      setCustomPrice(0);
+      return;
+    }
+    setCustomPrice(Math.round(numValue * 1_000_000));
+    setError(null);
+  };
+  
+  const handlePresetClick = (multiplier: number) => {
+    const newPrice = acquisitionPrice * multiplier;
+    setInputValue(formatCurrencyNumber(newPrice, 2));
+    setCustomPrice(Math.round(newPrice));
+    setError(null);
+  };
+  
+  const handleConfirm = () => {
+    if (mode === 'listForSale') {
+      if (customPrice <= 0) {
+        setError('Please enter a valid price');
+        return;
+      }
+      handlers.confirmList(customPrice);
+    } else if (mode === 'quickSell') {
+      handlers.confirmSell();
+    } else {
+      handlers.confirmBuyFromMarket();
+    }
+  };
+  
+  const config = getModalUIConfig(mode, driver);
+
+  return {
+    acquisitionPrice,
+    refundAmount,
+    loss,
+    price,
+    budgetAfter,
+    profit,
+    profitPercentage,
+    inputValue,
+    customPrice,
+    error,
+    canProceed,
+    config,
+    handlePriceChange,
+    handlePresetClick,
+    handleConfirm
+  };
+};

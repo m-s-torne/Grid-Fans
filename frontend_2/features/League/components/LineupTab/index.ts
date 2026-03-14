@@ -1,0 +1,1 @@
+export { LineupTab } from './LineupTab';

@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+    --font-open: 'Open Sans', sans-serif;
+}
+
+@layer utilities {
+    .shadow-solid {
+        box-shadow: 4px 4px 0 3px var(--color-red-600);
+    }
+    
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Regular-1.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Bold_web.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Formula1';
+  src: url('/fonts/Formula1-Wide.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  @apply min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900;
+  font-family: 'Formula1', sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+.ag-root ::-webkit-scrollbar {
+  width: 4px;
+  background: transparent;
+  border-radius: 0px;
+}
+
+.ag-root ::-webkit-scrollbar-thumb {
+  background: rgba(250,250,250,1);
+  border-radius: 0px;
+}
