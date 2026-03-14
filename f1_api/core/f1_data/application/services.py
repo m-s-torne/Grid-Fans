@@ -30,6 +30,8 @@ class DriversController:
         Returns:
             list: Drivers with calculated points and stats
         """
+        if self.repository is None:
+            raise ValueError("repository is required for get_drivers_service")
         try:
             database_data = self.repository.get_driver_results_data()
             max_round = database_data["max_round"]
@@ -58,6 +60,10 @@ class DriversController:
             logging.warning("Drivers controller execution interrupted by the following exception: %s", e)
             return []
     def get_driver_data(self) -> list[Drivers]:
+        if self.repository is None:
+            raise ValueError("repository is required for get_driver_data")
+        if self.season_context is None:
+            raise ValueError("season_context is required for get_driver_data")
         drivers_list = []
         added_drivers = set()
         session_types_by_rn = self.season_context.session_types_by_rn
@@ -86,6 +92,8 @@ class DriversController:
                         acronym = results.loc[results["FullName"] == driver, "Abbreviation"].values[0] if not results.loc[results["FullName"] == driver, "Abbreviation"].empty else None
                         country = results.loc[results["FullName"] == driver, "CountryCode"].values[0] if not results.loc[results["FullName"] == driver, "CountryCode"].empty else None
                         team = results.loc[results["FullName"] == driver, "TeamName"].values[0] if not results.loc[results["FullName"] == driver, "TeamName"].empty else None
+                        if driver_number is None or team is None:
+                            continue
                         team_name = team.lower().replace(" ", "")
                         driver_id = DriversUtility.create_driver_id(driver)
                         headshot_url = DriversUtility.get_driver_headshot_url(self.season,team_name,driver_id)
@@ -109,6 +117,8 @@ class DriversController:
                     return drivers_list
         return drivers_list
     def get_drivers_id_map(self):
+        if self.repository is None:
+            raise ValueError("repository is required for get_drivers_id_map")
         all_drivers = self.repository.get_all_drivers()
         driver_id_map = {driver.driver_number: driver.id for driver in all_drivers}
         return driver_id_map
@@ -122,13 +132,6 @@ def get_drivers_service(
     """
     controller = DriversController(session, repository=driver_repo, season_context=season_context)
     return controller.get_drivers_service()
-def get_driver_data(
-    session: Session,
-    driver_repo: IDriversRepository,
-    season_context: ISeasonContext,
-) -> list[Drivers]:
-    drivers_controller = DriversController(session, repository=driver_repo, season_context=season_context)
-    return drivers_controller.get_driver_data()
 def get_drivers_id_map(session: Session, driver_repo: IDriversRepository):
     drivers_controller = DriversController(session, repository=driver_repo)
     return drivers_controller.get_drivers_id_map()

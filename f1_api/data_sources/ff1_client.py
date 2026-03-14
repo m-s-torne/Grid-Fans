@@ -21,11 +21,14 @@ class FastF1Client:
             logging.error(f"Error getting schedule for {year}: {e}")
             return None
     @staticmethod
-    def get_session_map(year: int, existing_rounds: list[int]) -> dict:
+    def get_session_map(year: int, existing_rounds: set[tuple[int, int]]) -> dict:
         """Loads all sessions and returns them in a Dic"""
         session_map = {}
         try:
-            schedule = FastF1Client.get_event_schedule(year) 
+            schedule = FastF1Client.get_event_schedule(year)
+            if schedule is None:
+                logging.error(f"Could not retrieve schedule for {year}, aborting session load.")
+                return session_map
             for _,event in schedule.iloc[1:].iterrows():
                 rn = event["RoundNumber"]
                 if event["EventFormat"] == "testing":
@@ -39,20 +42,19 @@ class FastF1Client:
                     event["Session5"]
                 ]
                 for sn,session_type in enumerate(sessions,start=1):
+                    if (rn,sn) in existing_rounds:
+                        logging.info(f"{event["EventName"]} session {sn} already in DB")
+                        continue
                     try:
-                        if (rn,sn) in existing_rounds:
-                            logging.info(f"{event["EventName"]} session {sn} already in DB")
-                            continue
                         f1_session = ff1.get_session(year=year,gp=name,identifier=session_type)
                         f1_session.load(laps=True, telemetry=False, weather=False, messages=False)
-                        
-                        if f1_session.results.empty:
-                            logging.warning(f"No data for session {session_type} at {name}, skipping.")
-                            raise Exception("No more sessions to load")  
-                        session_map[(rn, session_type)] = f1_session
                     except Exception as e:
-                        logging.warning(f"Failed to load session {session_type} at {name}")
-                        raise SessionLoadError from e
+                        logging.warning(f"Failed to load session {session_type} at {name}: {e}")
+                        continue
+                    if f1_session.results.empty:
+                        logging.warning(f"No data for session {session_type} at {name}, skipping.")
+                        raise SessionLoadError("No more sessions to load")
+                    session_map[(rn, session_type)] = f1_session
             return session_map
         except SessionLoadError:
             logging.warning("Stopped loading further sessions")

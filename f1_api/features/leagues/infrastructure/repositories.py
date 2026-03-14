@@ -1,9 +1,9 @@
 """League repository implementations - Concrete database access"""
 from sqlmodel import Session, select
+from f1_api.features.user.domain.models import Users
 from ..domain.models import Leagues, UserLeagueLink, LeagueCreate
 from ..domain.interfaces import LeagueRepository as ILeagueRepository
 from ..domain.interfaces import UserLeagueLinkRepository as IUserLeagueLinkRepository
-from f1_api.features.user.domain.models import Users
 
 
 class LeagueRepositoryImpl(ILeagueRepository):
@@ -43,7 +43,7 @@ class LeagueRepositoryImpl(ILeagueRepository):
     
     def get_all(self) -> list[Leagues]:
         """Get all leagues"""
-        return self.session.exec(select(Leagues)).all()
+        return list(self.session.exec(select(Leagues)).all())
     
     def get_user_leagues(self, user_id: int) -> list[Leagues]:
         """Get all active leagues for a user"""
@@ -53,7 +53,7 @@ class LeagueRepositoryImpl(ILeagueRepository):
             .where(UserLeagueLink.user_id == user_id)
             .where(UserLeagueLink.is_active == True)
         )
-        return self.session.exec(statement).all()
+        return list(self.session.exec(statement).all())
     
     def count_participants(self, league_id: int) -> int:
         """Count active participants in a league"""
@@ -137,7 +137,7 @@ class UserLeagueLinkRepositoryImpl(IUserLeagueLinkRepository):
         ).first()
         return membership is not None and membership.is_admin
     
-    def get_league_participants(self, league_id: int) -> list:
+    def get_league_participants(self, league_id: int) -> list[tuple[Users, UserLeagueLink]]:
         """Get all active participants in a league with user details
         
         Returns:
@@ -145,10 +145,10 @@ class UserLeagueLinkRepositoryImpl(IUserLeagueLinkRepository):
         """
         participants_query = (
             select(Users, UserLeagueLink)
-            .join(UserLeagueLink, Users.id == UserLeagueLink.user_id)
+            .join(UserLeagueLink, Users.id == UserLeagueLink.user_id)  # type: ignore[arg-type]
             .where(
                 UserLeagueLink.league_id == league_id,
                 UserLeagueLink.is_active == True
             )
         )
-        return self.session.exec(participants_query).all()
+        return list(self.session.exec(participants_query).all())

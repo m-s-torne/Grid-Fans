@@ -144,9 +144,6 @@ class PurchaseDriverUseCase:
         buyer_team.budget_remaining -= int(purchase_price)
         buyer_team.updated_at = datetime.now()
         
-        # Save team changes (commit happens in route handler)
-        self.user_teams_repo.session.add(buyer_team)
-        
         # Create transaction record
         transaction = MarketTransaction(
             driver_id=request.driver_id,

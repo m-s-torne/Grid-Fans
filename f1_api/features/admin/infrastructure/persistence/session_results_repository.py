@@ -17,4 +17,4 @@ class SessionResultsRepository:
         existing = self.session.exec(
             select(SessionResult.round_number, SessionResult.session_number, SessionResult.driver_id)
         ).all()
-        return set((r.round_number, r.session_number, r.driver_id) for r in existing)
+        return set(existing)

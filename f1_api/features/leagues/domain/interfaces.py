@@ -70,7 +70,7 @@ class UserLeagueLinkRepository(Protocol):
 class IInitializeLeagueOwnershipUseCase(Protocol):
     """Protocol for initializing driver ownership records for a newly created league."""
 
-    def execute(self, league_id: int, season: int) -> int: ...
+    def execute(self, league_id: int, season_year: int) -> int: ...
 
 
 class IInitializeUserTeamUseCase(Protocol):

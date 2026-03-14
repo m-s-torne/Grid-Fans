@@ -7,6 +7,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
 from f1_api.dependencies.database import get_db_session
+from f1_api.dependencies.auth import get_current_user
+from f1_api.features.user.domain.models import Users
 
 from ..application.dtos import UserTeamUpdateDTO, UserTeamResponseDTO, SwapReserveDriverDTO
 from ..application.services import (
@@ -21,7 +23,7 @@ from f1_api.features.leagues.infrastructure.repositories import UserLeagueLinkRe
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/user-teams", tags=["user-teams"])
+router = APIRouter(prefix="/user-teams", tags=["user-teams"], dependencies=[Depends(get_current_user)])
 
 
 def get_user_teams_repository(session: Session = Depends(get_db_session)) -> UserTeamsRepositoryImpl:
@@ -43,8 +45,8 @@ def get_league_link_repository(session: Session = Depends(get_db_session)) -> Us
 def create_or_update_team(
     league_id: int,
     team_data: UserTeamUpdateDTO,
-    user_id: str,
     session: Session = Depends(get_db_session),
+    current_user: Users = Depends(get_current_user),
     user_teams_repo: UserTeamsRepositoryImpl = Depends(get_user_teams_repository),
     user_repo: UserRepositoryImpl = Depends(get_user_repository),
     league_link_repo: UserLeagueLinkRepositoryImpl = Depends(get_league_link_repository)
@@ -54,7 +56,6 @@ def create_or_update_team(
     
     - **league_id**: ID of the league for the team
     - **team_data**: Team configuration (name, drivers, constructor)
-    - **user_id**: Supabase user ID of the team owner
     
     Returns the created or updated team with calculated budget
     """
@@ -66,9 +67,9 @@ def create_or_update_team(
             league_link_repo=league_link_repo
         )
         
-        result = service.execute(league_id, team_data, user_id)
+        result = service.execute(league_id, team_data, current_user.supabase_user_id)
         
-        logger.info(f"User {user_id} created/updated team in league {league_id}")
+        logger.info(f"User {current_user.supabase_user_id} created/updated team in league {league_id}")
         
         return result
         
@@ -83,7 +84,7 @@ def create_or_update_team(
 @router.get("/leagues/{league_id}/teams/me", response_model=UserTeamResponseDTO | None)
 def get_my_team(
     league_id: int,
-    user_id: str,
+    current_user: Users = Depends(get_current_user),
     user_teams_repo: UserTeamsRepositoryImpl = Depends(get_user_teams_repository),
     user_repo: UserRepositoryImpl = Depends(get_user_repository)
 ):
@@ -91,7 +92,6 @@ def get_my_team(
     Get the current user's team in a specific league
     
     - **league_id**: ID of the league
-    - **user_id**: Supabase user ID of the team owner
     
     Returns the user's team or None if no team exists
     """
@@ -101,7 +101,7 @@ def get_my_team(
             user_repo=user_repo
         )
         
-        result = service.execute(league_id, user_id)
+        result = service.execute(league_id, current_user.supabase_user_id)
         
         return result
         

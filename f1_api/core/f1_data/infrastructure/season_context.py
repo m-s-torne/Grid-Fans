@@ -50,8 +50,7 @@ class SeasonContextController:
     def session_map(self):
         """Lazy load session map"""
         if self._session_map is None:
-            registered = list({rn for rn, _ in self.registered_rounds})
-            self._session_map = self.ff1_client.get_session_map(self.year, registered)
+            self._session_map = self.ff1_client.get_session_map(self.year, self.registered_rounds)
         return self._session_map
 
     @property

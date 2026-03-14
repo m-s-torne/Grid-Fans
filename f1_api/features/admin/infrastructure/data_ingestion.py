@@ -4,6 +4,7 @@ Provides functions to fetch F1 data for season database updates.
 """
 import logging
 import math
+import pandas as pd
 from sqlmodel import Session
 from fastf1 import plotting
 from f1_api.core.f1_data.infrastructure.season_context import SeasonContextController
@@ -113,11 +114,15 @@ def get_session_results(year: int, session: Session) -> list[SessionResult]:
                     fastest_lap = None
 
                     if session_type in ("Sprint", "Race"):
-                        position = driver_results["ClassifiedPosition"]
+                        position = str(driver_results["ClassifiedPosition"])
                         grid_position = int(driver_results["GridPosition"])
-                        total_time = driver_results["Time"].total_seconds()
-                        if math.isnan(total_time):
+                        raw_time = driver_results["Time"]
+                        if pd.isna(raw_time):
                             total_time = None
+                        else:
+                            total_time = raw_time.total_seconds()
+                            if math.isnan(total_time):
+                                total_time = None
                         points = int(driver_results["Points"])
                         status = driver_results["Status"]
                         session_fastest = laps["LapTime"].min().total_seconds()

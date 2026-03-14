@@ -5,6 +5,7 @@ from sqlmodel import Session, select
 from pydantic import BaseModel
 
 from f1_api.dependencies import get_db_session
+from f1_api.dependencies.auth import get_current_user
 from f1_api.features.market.application.dtos.requests import (
     PurchaseDriverRequest,
     PurchaseFromUserRequest,
@@ -28,7 +29,7 @@ from f1_api.features.market.infrastructure.persistence.buyout_repository import 
 from f1_api.features.user_teams.domain.models import UserTeams
 from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
 
-router = APIRouter(prefix="/market", tags=["market"])
+router = APIRouter(prefix="/market", tags=["market"], dependencies=[Depends(get_current_user)])
 
 
 # ============================================================================

@@ -1,6 +1,6 @@
+from datetime import datetime
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field as SQLField
-from datetime import datetime
 
 
 class Users(SQLModel, table=True):
@@ -9,6 +9,7 @@ class Users(SQLModel, table=True):
     email: str = SQLField(unique=True, index=True)
     supabase_user_id: str = SQLField(unique=True, index=True)
     is_verified: bool = SQLField(default=False)
+    is_admin: bool = SQLField(default=False)
     created_at: datetime = SQLField(default_factory=datetime.now)
 
 

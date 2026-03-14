@@ -41,9 +41,9 @@ class BuyoutRepository:
         return BuyoutMapper.to_entity(model)
     
     def count_buyouts_between_users(
-        self, 
-        buyer_id: int, 
-        victim_id: int, 
+        self,
+        buyer_id: int,
+        victim_id: int,
         league_id: int,
         season: int
     ) -> int:
