@@ -23,7 +23,7 @@ from f1_api.features.leagues.infrastructure.repositories import UserLeagueLinkRe
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/user-teams", tags=["user-teams"], dependencies=[Depends(get_current_user)])
+router = APIRouter(prefix="/user-teams", dependencies=[Depends(get_current_user)])
 
 
 def get_user_teams_repository(session: Session = Depends(get_db_session)) -> UserTeamsRepositoryImpl:

@@ -8,7 +8,7 @@ from f1_api.features.user_teams.application.services import GetMyTeamService, Sw
 from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
 from f1_api.features.user.infrastructure.repositories import UserRepositoryImpl
 
-router = APIRouter(tags=["leagues"])
+router = APIRouter()
 
 
 @router.get("/{league_id}/teams/me")

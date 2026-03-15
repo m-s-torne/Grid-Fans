@@ -6,7 +6,7 @@ from f1_api.dependencies.auth import get_current_user
 from f1_api.features.teams.infrastructure.repositories import TeamsRepository
 from f1_api.features.teams.application.services import GetTeamsWithStatsService
 
-router = APIRouter(prefix="/teams", tags=["Teams"], dependencies=[Depends(get_current_user)])
+router = APIRouter(prefix="/teams", dependencies=[Depends(get_current_user)])
 
 
 @router.get("/")

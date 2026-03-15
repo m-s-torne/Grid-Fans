@@ -29,7 +29,7 @@ from f1_api.features.market.infrastructure.persistence.buyout_repository import 
 from f1_api.features.user_teams.domain.models import UserTeams
 from f1_api.features.user_teams.infrastructure.repositories import UserTeamsRepositoryImpl
 
-router = APIRouter(prefix="/market", tags=["market"], dependencies=[Depends(get_current_user)])
+router = APIRouter(prefix="/market", dependencies=[Depends(get_current_user)])
 
 
 # ============================================================================

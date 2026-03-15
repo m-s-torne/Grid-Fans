@@ -36,7 +36,7 @@ from f1_api.features.market.application.dtos.responses import (
 )
 from f1_api.features.user.infrastructure.repositories import UserRepositoryImpl
 
-router = APIRouter(tags=["leagues"])
+router = APIRouter()
 
 CURRENT_SEASON = 2025  # TODO: drive from config / DB
 

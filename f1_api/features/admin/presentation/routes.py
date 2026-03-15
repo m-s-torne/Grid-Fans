@@ -16,7 +16,7 @@ from f1_api.core.f1_data.infrastructure.season_context import SeasonContextContr
 from f1_api.core.f1_data.infrastructure.driver_data import get_driver_data
 from f1_api.core.f1_data.infrastructure.driver_team_link_data import get_all_driver_team_links, reconcile_driver_team_links
 
-router = APIRouter(prefix="/admin", tags=["Admin"], dependencies=[Depends(get_admin_user)])
+router = APIRouter(prefix="/admin", dependencies=[Depends(get_admin_user)])
 
 
 @router.post("/season/")

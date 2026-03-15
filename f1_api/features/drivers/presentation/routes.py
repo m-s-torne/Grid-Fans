@@ -7,7 +7,7 @@ from f1_api.dependencies.auth import get_current_user
 from f1_api.features.drivers.infrastructure.persistence import DriversRepository
 from f1_api.features.drivers.application.services import GetDriversService
 
-router = APIRouter(prefix="/drivers", tags=["Drivers"], dependencies=[Depends(get_current_user)])
+router = APIRouter(prefix="/drivers", dependencies=[Depends(get_current_user)])
 
 
 @router.get("/")

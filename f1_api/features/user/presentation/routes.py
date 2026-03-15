@@ -10,7 +10,7 @@ from ..application.services import CreateUserService, GetUserService
 from ..application.dtos import UserCreateDTO, UserResponseDTO
 from ..infrastructure.repositories import UserRepositoryImpl
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users")
 
 @router.post("/", response_model=UserResponseDTO)
 def create_user(

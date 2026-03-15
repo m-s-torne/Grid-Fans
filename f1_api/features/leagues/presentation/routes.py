@@ -36,7 +36,7 @@ from .team_routes import router as team_router
 from .market_routes import router as market_router
 
 
-router = APIRouter(prefix="/leagues", tags=["leagues"], dependencies=[Depends(get_current_user)])
+router = APIRouter(prefix="/leagues", dependencies=[Depends(get_current_user)])
 router.include_router(team_router)
 router.include_router(market_router)
 

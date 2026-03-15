@@ -20,13 +20,13 @@ ff1.Cache.enable_cache(ff1_cache_dir)
 
 app = FastAPI()
 
-app.include_router(leagues_router, prefix="/api", tags=["Leagues - DDD"])
-app.include_router(teams_router, prefix="/api", tags=["Teams - DDD"])
-app.include_router(admin_router, prefix="/api", tags=["Admin - DDD"])
+app.include_router(leagues_router, prefix="/api", tags=["Leagues"])
+app.include_router(teams_router, prefix="/api", tags=["Teams"])
+app.include_router(admin_router, prefix="/api", tags=["Admin"])
 app.include_router(users_router, prefix="/api", tags=["Users"])
-app.include_router(drivers_router, prefix="/api", tags=["Drivers - DDD"])
-app.include_router(user_teams_router, prefix="/api", tags=["User Teams - DDD"])
-app.include_router(market_router, prefix="/api", tags=["Market - DDD"])
+app.include_router(drivers_router, prefix="/api", tags=["Drivers"])
+app.include_router(user_teams_router, prefix="/api", tags=["User Teams"])
+app.include_router(market_router, prefix="/api", tags=["Market"])
 
 # Security headers middleware
 @app.middleware("http")
