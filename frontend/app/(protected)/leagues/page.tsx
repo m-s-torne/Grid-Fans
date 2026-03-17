@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { useLeagues } from '@/lib/contexts/LeaguesContext';
 import { useLeagueModals } from '@/features/League/hooks';
 import { CreateLeagueModal } from '@/features/League/components/modals';
@@ -10,6 +11,12 @@ import { LeagueCard, LeagueActionCard } from '@/features/League/components';
 export default function LeaguesPage() {
     const router = useRouter();
     const { leagues, isLoading, error } = useLeagues();
+    const [showError, setShowError] = useState(false);
+    useEffect(() => {
+        if (!error) { setShowError(false); return; }
+        const timer = setTimeout(() => setShowError(true), 1500);
+        return () => clearTimeout(timer);
+    }, [error]);
     const { 
         showCreateModal, 
         showJoinModal, 
@@ -56,12 +63,12 @@ export default function LeaguesPage() {
                         My Leagues
                     </h2>
                     
-                    {isLoading ? (
+                    {isLoading || (error && !showError) ? (
                         <div className="text-center py-8 sm:py-12">
                             <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-red-500 mx-auto mb-4"></div>
                             <p className="text-sm sm:text-base lg:text-lg text-gray-400">Loading your leagues...</p>
                         </div>
-                    ) : error ? (
+                    ) : (showError && error) ? (
                         <div className="text-center py-8 sm:py-12">
                             <svg className="w-12 h-12 sm:w-16 sm:h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
