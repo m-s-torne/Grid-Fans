@@ -8,10 +8,12 @@ import type { Driver } from '@/features/Market/types/marketTypes'
 import type { Team } from '@/lib/types'
 import { useQuery } from '@tanstack/react-query'
 import { f1DataService } from '@/lib/services'
+import { useAuth } from '@/lib/contexts/AuthContext'
 
 export const useTeamBuilder = () => {
     const { leagueId } = useParams<{ leagueId: string }>();
     const router = useRouter();
+    const { isInitialized } = useAuth();
     
     const { league, isLoading: leagueLoading, error: leagueError } = useLeagueDetail(leagueId!);
     
@@ -27,11 +29,13 @@ export const useTeamBuilder = () => {
     const { data: drivers, isLoading: driversLoading } = useQuery({
         queryKey: ['drivers'],
         queryFn: f1DataService.getAllDrivers,
+        enabled: isInitialized,
     });
     
     const { data: teams, isLoading: constructorsLoading } = useQuery({
         queryKey: ['teams'],
         queryFn: f1DataService.getAllTeams,
+        enabled: isInitialized,
     });
 
     useEffect(() => {

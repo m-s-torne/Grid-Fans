@@ -21,14 +21,17 @@ class SeasonContextController:
         """Lazy load schedule"""
         if self._schedule is None:
             self._schedule = self.ff1_client.get_event_schedule(self.year)
-            assert self._schedule is not None, f"FastF1 returned no schedule for year {self.year}"
+            if self._schedule is None:
+                raise RuntimeError(f"FastF1 returned no schedule for year {self.year}")
         return self._schedule
 
     @property
     def events_data(self):
         """Lazy load events data by round number"""
         events = []
-        for _, e in self.schedule.iloc[1:].iterrows():
+        for _, e in self.schedule.iterrows():
+            if e["EventFormat"] == "testing":
+                continue
             event = {}
             event["round_number"] = e["RoundNumber"]
             event["event_name"] = e["EventName"]
@@ -41,9 +44,12 @@ class SeasonContextController:
 
     @property
     def registered_rounds(self):
-        """Lazy load registered rounds"""
+        """Lazy load registered rounds for this season only"""
         if self._registered_rounds is None:
-            self._registered_rounds = set(self.session.exec(select(SessionResult.round_number, SessionResult.session_number)).all())
+            self._registered_rounds = set(self.session.exec(
+                select(SessionResult.round_number, SessionResult.session_number)
+                .where(SessionResult.season_id == self.year)
+            ).all())
         return self._registered_rounds
 
     @property
@@ -58,7 +64,9 @@ class SeasonContextController:
         """Lazy load session types by round number"""
         if self._session_types_by_rn is None:
             self._session_types_by_rn = {}
-            for _, event in self.schedule.iloc[1:].iterrows():
+            for _, event in self.schedule.iterrows():
+                if event["EventFormat"] == "testing":
+                    continue
                 round_number = event["RoundNumber"]
                 sessions = [
                     event["Session1"],

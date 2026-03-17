@@ -9,7 +9,8 @@ class SessionRepository:
         self.season = year
 
     def get_existing_sessions(self) -> set[tuple]:
-        """Get set of (round_number, session_number) tuples already stored."""
+        """Get set of (round_number, session_number) tuples already stored for this season."""
         return set(self.session.exec(
             select(Sessions.round_number, Sessions.session_number)
+            .where(Sessions.season_id == self.season)
         ).all())

@@ -9,5 +9,7 @@ class EventsRepository:
         self.season = year
 
     def get_round_numbers(self) -> set[int]:
-        """Get set of round numbers already stored."""
-        return set(self.session.exec(select(Events.round_number)).all())
+        """Get set of round numbers already stored for this season."""
+        return set(self.session.exec(
+            select(Events.round_number).where(Events.season_id == self.season)
+        ).all())

@@ -35,7 +35,7 @@ http.interceptors.response.use(
             && data?.detail?.includes?.('already registered');
 
         if (!isExpectedDuplicate) {
-            console.error("API ERROR", { status, method, url, params, hasAuth, data });
+            console.error("API ERROR", { status, method, url, params, hasAuth, data, message: err?.message, code: err?.code });
         }
         return Promise.reject(err);
     }
